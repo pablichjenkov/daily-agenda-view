@@ -12,9 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Calendar">
         <activity
-            android:name=".MainActivity"
+            android:name="com.macaosoftware.ui.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Calendar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

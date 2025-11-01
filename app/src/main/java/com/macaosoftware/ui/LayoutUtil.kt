@@ -1,4 +1,4 @@
-package com.rcl.excalibur.calendar
+package com.macaosoftware.ui
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -20,10 +20,10 @@ fun getEventHeight(event: Event): Dp {
  * For a given event, it returns the maximum number of sibling events, across all the slots the
  * event touches.
  * */
-fun getMaximumNumberOfSiblingsInContainingSlots(event: Event, calendarState: CalendarState): Int {
-    val containingSlots = getSlotsRangeForEvent(event, calendarState)
+fun getMaximumNumberOfSiblingsInContainingSlots(event: Event, dailyAgendaState: DailyAgendaState): Int {
+    val containingSlots = getSlotsIncludeStartSlot(event, dailyAgendaState)
     val maxNumberOfEvents = containingSlots.fold(initial = 1) { maxNumberOfEvents, slot ->
-        val numberOfEvents = calendarState.slotMetadataMap[slot] ?: 0
+        val numberOfEvents = dailyAgendaState.slotInfoMap[slot]?.getTotalColumnSpans() ?: 0
         if (numberOfEvents > maxNumberOfEvents) {
             numberOfEvents
         } else maxNumberOfEvents
@@ -35,12 +35,12 @@ fun getMaximumNumberOfSiblingsInContainingSlots(event: Event, calendarState: Cal
 /**
  * Returns a list of the slots touched by the given event. Including its own start slot.
  * */
-fun getSlotsRangeForEvent(
+fun getSlotsIncludeStartSlot(
     event: Event,
-    calendarState: CalendarState
+    dailyAgendaState: DailyAgendaState
 ): List<Slot> {
-    val slotIndex = calendarState.slots.indexOf(event.startSlot)
-    val eventSlots = calendarState.slots.subList(slotIndex, calendarState.slots.size)
+    val slotIndex = dailyAgendaState.slots.indexOf(event.startSlot)
+    val eventSlots = dailyAgendaState.slots.subList(slotIndex, dailyAgendaState.slots.size)
     val containingSlots = mutableListOf<Slot>()
     eventSlots.forEach { slot ->
         println("LayoutUtil: Checking slot: ${slot.title}")
@@ -56,11 +56,11 @@ fun getSlotsRangeForEvent(
  * Returns a list of the slots touched by the given event. Excluding its own start slot.
  * */
 fun getSlotsIgnoreStartSlot(
-    calendarState: CalendarState,
+    dailyAgendaState: DailyAgendaState,
     event: Event
 ): List<Slot> {
-    val slotIndex = calendarState.slots.indexOf(event.startSlot)
-    val laterSlots = calendarState.slots.subList(slotIndex + 1, calendarState.slots.size)
+    val slotIndex = dailyAgendaState.slots.indexOf(event.startSlot)
+    val laterSlots = dailyAgendaState.slots.subList(slotIndex + 1, dailyAgendaState.slots.size)
     val containingSlots = mutableListOf<Slot>()
     laterSlots.forEach { slot ->
         if (event.endTime > slot.time + 0.1) {
@@ -72,7 +72,7 @@ fun getSlotsIgnoreStartSlot(
 }
 
 internal fun updateEventOffsetX(
-    calendarState: CalendarState,
+    dailyAgendaState: DailyAgendaState,
     event: Event,
     slotOffsetInfoMap: Map<Slot, OffsetInfo>,
     eventWidth: Dp,
@@ -80,7 +80,7 @@ internal fun updateEventOffsetX(
 ) {
 
     val eventSlops = getSlotsIgnoreStartSlot(
-        calendarState = calendarState,
+        dailyAgendaState = dailyAgendaState,
         event = event
     )
     val currentSlotOffsetInfo = slotOffsetInfoMap[event.startSlot]!!

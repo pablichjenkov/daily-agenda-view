@@ -1,6 +1,6 @@
-package com.rcl.excalibur.calendar.data
+package com.macaosoftware.ui.data
 
-import com.rcl.excalibur.calendar.Slot
+import com.macaosoftware.ui.Slot
 
 object Slots {
 

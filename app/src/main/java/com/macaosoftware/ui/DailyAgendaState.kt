@@ -1,29 +1,30 @@
-package com.rcl.excalibur.calendar
+package com.macaosoftware.ui
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.rcl.excalibur.calendar.data.Sample0
-import com.rcl.excalibur.calendar.data.Sample1
-import com.rcl.excalibur.calendar.data.Sample2
-import com.rcl.excalibur.calendar.data.Sample3
-import com.rcl.excalibur.calendar.data.Slots
+import com.macaosoftware.ui.data.Sample3
+import com.macaosoftware.ui.data.Slots
 
-class CalendarState {
-    val slots = Slots.slots
-    val sampleData = Sample3(slots)
-    val slotToEventMap = sampleData.slotToEventMap
-    internal val slotMetadataMap = sampleData.slotMetadataMap
-}
+class DailyAgendaState(
+    val slots: List<Slot>,
+    val slotToEventMap: Map<Slot, List<Event>>,// = sampleData.slotToEventMap
+    val slotInfoMap: Map<Slot, SlotInfo>,
+    val maxColumns: Int
+)
 
 class Slot(
     val title: String,
     val time: Float, // 8.0, 8.5, 9.0, 9.5, 10.0 ... 23.5, 24.0
 )
 
-internal class SlotInfo(
+// TODO: Change var with val
+data class SlotInfo(
     var numberOfContainingEvents: Int,
-    var numberOfColumns: Int,
-)
+    var numberOfColumnsLeft: Int,
+    var numberOfColumnsRight: Int,
+) {
+    fun getTotalColumnSpans() = numberOfColumnsLeft + numberOfColumnsRight
+}
 
 class Event(
     val startSlot: Slot,

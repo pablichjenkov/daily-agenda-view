@@ -1,4 +1,4 @@
-package com.rcl.excalibur.calendar
+package com.macaosoftware.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,14 +12,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import kotlin.collections.forEach
 
 
 @Composable
-fun SlotsLayer(calendarState: CalendarState) {
+fun SlotsLayer(dailyAgendaState: DailyAgendaState) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        calendarState.slotToEventMap.keys.forEach { slot ->
+        dailyAgendaState.slotToEventMap.keys.forEach { slot ->
             SlotLine(slot = slot)
         }
     }

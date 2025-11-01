@@ -1,9 +1,9 @@
-package com.rcl.excalibur.calendar.data
+package com.macaosoftware.ui.data
 
-import com.rcl.excalibur.calendar.Event
-import com.rcl.excalibur.calendar.Slot
+import com.macaosoftware.ui.Event
+import com.macaosoftware.ui.Slot
 
-class Sample3(private val slots: List<Slot>) {
+class Sample2(private val slots: List<Slot>) {
 
     val slotToEventMap: Map<Slot, List<Event>> = mapOf(
         slots[0] to createEventsFor800AM(startSlot = slots[0]),
@@ -61,10 +61,6 @@ class Sample3(private val slots: List<Slot>) {
         slots[24] to computeSlotInfo(slot = slots[24]),
     )
 
-    /**
-     * Computes the amount of events that are contained by the given slop. The events will be the
-     * sum of earlier slots events plus this slot's events.
-     * */
     fun computeSlotInfo(slot: Slot): Int {
         var numberOfEvents = slotToEventMap[slot]?.size ?: 0
         for (slotIter in slots) {
@@ -122,23 +118,17 @@ class Sample3(private val slots: List<Slot>) {
                 startSlot = startSlot,
                 title = "Evt 5",
                 startTime = 8.5F,
-                endTime = 12.5F
+                endTime = 11.0F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 6",
                 startTime = 8.5F,
-                endTime = 10.5F
-            ),
-            Event(
-                startSlot = startSlot,
-                title = "Evt 7",
-                startTime = 8.5F,
                 endTime = 9.5F
             ),
             Event(
                 startSlot = startSlot,
-                title = "Evt 8",
+                title = "Evt 7",
                 startTime = 8.5F,
                 endTime = 9.0F
             ),
@@ -149,25 +139,25 @@ class Sample3(private val slots: List<Slot>) {
         return listOf(
             Event(
                 startSlot = startSlot,
-                title = "Evt 9",
+                title = "Evt 8",
                 startTime = 9.0F,
                 endTime = 11.0F
             ),
             Event(
                 startSlot = startSlot,
-                title = "Evt 10",
+                title = "Evt 9",
                 startTime = 9.0F,
                 endTime = 10.5F
             ),
             Event(
                 startSlot = startSlot,
-                title = "Evt 11",
+                title = "Evt 10",
                 startTime = 9.0F,
                 endTime = 10.0F
             ),
             Event(
                 startSlot = startSlot,
-                title = "Evt 12",
+                title = "Evt 11",
                 startTime = 9.0F,
                 endTime = 10.0F
             )
@@ -178,25 +168,19 @@ class Sample3(private val slots: List<Slot>) {
         return listOf(
             Event(
                 startSlot = startSlot,
-                title = "Evt 13",
+                title = "Evt 12",
                 startTime = 9.5F,
                 endTime = 11.0F
             ),
             Event(
                 startSlot = startSlot,
-                title = "Evt 14",
-                startTime = 9.5F,
-                endTime = 10.5F
-            ),
-            Event(
-                startSlot = startSlot,
-                title = "Evt 15",
+                title = "Evt 13",
                 startTime = 9.5F,
                 endTime = 10.0F
             ),
             Event(
                 startSlot = startSlot,
-                title = "Evt 16",
+                title = "Evt 14",
                 startTime = 9.5F,
                 endTime = 10.0F
             )
@@ -207,25 +191,19 @@ class Sample3(private val slots: List<Slot>) {
         return listOf(
             Event(
                 startSlot = startSlot,
-                title = "Evt 17",
+                title = "Evt 15",
                 startTime = 10.0F,
                 endTime = 11.5F
             ),
             Event(
                 startSlot = startSlot,
-                title = "Evt 18",
+                title = "Evt 16",
                 startTime = 10.0F,
                 endTime = 11.0F
             ),
             Event(
                 startSlot = startSlot,
-                title = "Evt 19",
-                startTime = 10.0F,
-                endTime = 10.5F
-            ),
-            Event(
-                startSlot = startSlot,
-                title = "Evt 20",
+                title = "Evt 17",
                 startTime = 10.0F,
                 endTime = 10.5F
             )
@@ -236,25 +214,13 @@ class Sample3(private val slots: List<Slot>) {
         return listOf(
             Event(
                 startSlot = startSlot,
-                title = "Evt 21",
+                title = "Evt 18",
                 startTime = 10.5F,
                 endTime = 11.5F
             ),
             Event(
                 startSlot = startSlot,
-                title = "Evt 22",
-                startTime = 10.5F,
-                endTime = 11.0F
-            ),
-            Event(
-                startSlot = startSlot,
-                title = "Evt 23",
-                startTime = 10.5F,
-                endTime = 11.0F
-            ),
-            Event(
-                startSlot = startSlot,
-                title = "Evt 24",
+                title = "Evt 19",
                 startTime = 10.5F,
                 endTime = 11.0F
             )

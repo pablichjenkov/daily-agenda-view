@@ -1,4 +1,4 @@
-package com.rcl.excalibur.calendar.ui.theme
+package com.macaosoftware.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

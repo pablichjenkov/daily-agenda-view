@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.rcl.excalibur.calendar"
+    namespace = "com.macaosoftware.ui"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.rcl.excalibur.calendar"
+        applicationId = "com.macaosoftware.ui"
         minSdk = 28
         targetSdk = 36
         versionCode = 1
@@ -28,14 +28,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
-    }
-    buildFeatures {
-        compose = true
+        jvmTarget = "17"
     }
 }
 

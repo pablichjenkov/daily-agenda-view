@@ -1,4 +1,4 @@
-package com.rcl.excalibur.calendar
+package com.macaosoftware.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -23,11 +23,12 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.rcl.excalibur.calendar.ui.theme.CalendarTheme
+import androidx.compose.ui.unit.max
+import com.macaosoftware.ui.theme.CalendarTheme
 import kotlin.random.Random
 
 @Composable
-fun CalendarView(calendarState: CalendarState) {
+fun DailyAgendaView(dailyAgendaState: DailyAgendaState) {
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
@@ -35,7 +36,7 @@ fun CalendarView(calendarState: CalendarState) {
             .verticalScroll(scrollState)
     ) {
         Box {
-            SlotsLayer(calendarState = calendarState)
+            SlotsLayer(dailyAgendaState = dailyAgendaState)
             Box(
                 modifier = Modifier
                     .padding(start = TimeTitleLeftPadding.dp) // TODO: Compute this value properly. It is the slot.title width
@@ -48,36 +49,40 @@ fun CalendarView(calendarState: CalendarState) {
                 val eventContainerWidth =
                     (containerSize.width.dp / density) - TimeTitleLeftPadding.dp
 
+                val minimumWidth = eventContainerWidth / dailyAgendaState.maxColumns
+
+                println("DailyAgendaState :: minimumWidth = ${dailyAgendaState.maxColumns}")
+
                 var arrangeToTheLeft = remember { true }
 
                 val offsetInfoMap = remember {
                     mapOf<Slot, OffsetInfo>(
-                        calendarState.slots[0] to OffsetInfo(),
-                        calendarState.slots[1] to OffsetInfo(),
-                        calendarState.slots[2] to OffsetInfo(),
-                        calendarState.slots[3] to OffsetInfo(),
-                        calendarState.slots[4] to OffsetInfo(),
-                        calendarState.slots[5] to OffsetInfo(),
-                        calendarState.slots[6] to OffsetInfo(),
-                        calendarState.slots[7] to OffsetInfo(),
-                        calendarState.slots[8] to OffsetInfo(),
-                        calendarState.slots[9] to OffsetInfo(),
-                        calendarState.slots[10] to OffsetInfo(),
-                        calendarState.slots[11] to OffsetInfo(),
-                        calendarState.slots[12] to OffsetInfo(),
-                        calendarState.slots[13] to OffsetInfo(),
-                        calendarState.slots[14] to OffsetInfo(),
-                        calendarState.slots[15] to OffsetInfo(),
-                        calendarState.slots[16] to OffsetInfo(),
-                        calendarState.slots[17] to OffsetInfo(),
-                        calendarState.slots[18] to OffsetInfo(),
-                        calendarState.slots[19] to OffsetInfo(),
-                        calendarState.slots[20] to OffsetInfo(),
+                        dailyAgendaState.slots[0] to OffsetInfo(),
+                        dailyAgendaState.slots[1] to OffsetInfo(),
+                        dailyAgendaState.slots[2] to OffsetInfo(),
+                        dailyAgendaState.slots[3] to OffsetInfo(),
+                        dailyAgendaState.slots[4] to OffsetInfo(),
+                        dailyAgendaState.slots[5] to OffsetInfo(),
+                        dailyAgendaState.slots[6] to OffsetInfo(),
+                        dailyAgendaState.slots[7] to OffsetInfo(),
+                        dailyAgendaState.slots[8] to OffsetInfo(),
+                        dailyAgendaState.slots[9] to OffsetInfo(),
+                        dailyAgendaState.slots[10] to OffsetInfo(),
+                        dailyAgendaState.slots[11] to OffsetInfo(),
+                        dailyAgendaState.slots[12] to OffsetInfo(),
+                        dailyAgendaState.slots[13] to OffsetInfo(),
+                        dailyAgendaState.slots[14] to OffsetInfo(),
+                        dailyAgendaState.slots[15] to OffsetInfo(),
+                        dailyAgendaState.slots[16] to OffsetInfo(),
+                        dailyAgendaState.slots[17] to OffsetInfo(),
+                        dailyAgendaState.slots[18] to OffsetInfo(),
+                        dailyAgendaState.slots[19] to OffsetInfo(),
+                        dailyAgendaState.slots[20] to OffsetInfo(),
                         // TODO: Generate this programmatically
                     )
                 }
 
-                calendarState.slotToEventMap.entries.forEach { entry ->
+                dailyAgendaState.slotToEventMap.entries.forEach { entry ->
                     val slot = entry.key
                     val numbersOfSlots = (slot.time - InitialSlotTime) / SlotUnit
                     val offsetY = (numbersOfSlots * SlotHeight).dp
@@ -117,15 +122,20 @@ fun CalendarView(calendarState: CalendarState) {
                                         }
                                     }
                                 } else {
-                                    val widthNumber = getMaximumNumberOfSiblingsInContainingSlots(event, calendarState)
+                                    val widthNumber = getMaximumNumberOfSiblingsInContainingSlots(
+                                        event,
+                                        dailyAgendaState
+                                    )
                                     (slotRemainingWidth / widthNumber)
                                 }
 
+                                val finalEventWidth = max(minimumWidth, eventWidth)
+
                                 updateEventOffsetX(
-                                    calendarState = calendarState,
+                                    dailyAgendaState = dailyAgendaState,
                                     event = event,
                                     slotOffsetInfoMap = offsetInfoMap,
-                                    eventWidth = eventWidth,
+                                    eventWidth = finalEventWidth,
                                     isLeft = true
                                 )
 
@@ -134,8 +144,9 @@ fun CalendarView(calendarState: CalendarState) {
                                 Column(
                                     modifier = Modifier
                                         .height(height = eventHeight)
-                                        .width(width = eventWidth)
-                                        // .padding(2.dp)
+                                        .width(width = finalEventWidth)
+                                        .padding(2.dp)
+                                        .padding(top = 1.dp)
                                         .background(color = generateRandomColor())
                                 ) {
                                     Text(text = "${event.title}: ${event.startTime}-${event.endTime}")
@@ -164,15 +175,20 @@ fun CalendarView(calendarState: CalendarState) {
                                         }
                                     }
                                 } else {
-                                    val widthNumber = getMaximumNumberOfSiblingsInContainingSlots(event, calendarState)
+                                    val widthNumber = getMaximumNumberOfSiblingsInContainingSlots(
+                                        event,
+                                        dailyAgendaState
+                                    )
                                     (slotRemainingWidth / widthNumber)
                                 }
 
+                                val finalEventWidth = max(minimumWidth, eventWidth)
+
                                 updateEventOffsetX(
-                                    calendarState = calendarState,
+                                    dailyAgendaState = dailyAgendaState,
                                     event = event,
                                     slotOffsetInfoMap = offsetInfoMap,
-                                    eventWidth = eventWidth,
+                                    eventWidth = finalEventWidth,
                                     isLeft = false
                                 )
 
@@ -181,8 +197,9 @@ fun CalendarView(calendarState: CalendarState) {
                                 Column(
                                     modifier = Modifier
                                         .height(height = eventHeight)
-                                        .width(width = eventWidth)
-                                        // .padding(2.dp)
+                                        .width(width = finalEventWidth)
+                                        .padding(2.dp)
+                                        .padding(top = 1.dp)
                                         .background(color = generateRandomColor())
                                 ) {
                                     Text(text = "${event.title}: ${event.startTime}-${event.endTime}")
@@ -213,11 +230,11 @@ fun generateRandomColor(): Color {
 @Composable
 fun CalendarViewPreview() {
 
-    val calendarState = remember { CalendarState() }
+    val dailyAgendaState = remember { DailyAgendaStateController().computeNextState() }
     CalendarTheme {
         Box(modifier = Modifier.size(600.dp, 1000.dp)) {
-            CalendarView(
-                calendarState = calendarState
+            DailyAgendaView(
+                dailyAgendaState = dailyAgendaState
             )
         }
     }

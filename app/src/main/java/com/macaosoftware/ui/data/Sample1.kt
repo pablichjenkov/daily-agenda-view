@@ -1,7 +1,7 @@
-package com.rcl.excalibur.calendar.data
+package com.macaosoftware.ui.data
 
-import com.rcl.excalibur.calendar.Event
-import com.rcl.excalibur.calendar.Slot
+import com.macaosoftware.ui.Event
+import com.macaosoftware.ui.Slot
 
 class Sample1(private val slots: List<Slot>) {
 
