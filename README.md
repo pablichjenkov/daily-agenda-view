@@ -3,7 +3,8 @@ This is a compose view useful for Apps that needs to present daily events or dai
 
 ## Demo
 
-![daily-agenda-demo](https://github.com/user-attachments/assets/d5018964-edf3-4ecc-a3c1-e801ccf65fe7)
+<img width="350" alt="daily-agenda-demo" src="https://github.com/user-attachments/assets/f435cbe9-e64c-476f-b5c2-7ea4757ef29e" />
+
 
 
 ## Future work
