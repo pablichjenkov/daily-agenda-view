@@ -1,5 +1,5 @@
 ## Daily Agenda View
-This is a compose view useful for Apps that needs to present daily events or daily activities type of functionality. The idea came out after searching for a daily calendar similar to Microsotf Outlook App for Android. There seems to be not many libraries offering this functionality and the ones that do do not meet my requirements.
+This is a compose view useful for Apps that needs to present daily events or daily activities type of functionality. The idea came out after searching for a daily calendar similar to Microsotf Outlook App for Android. There seems to be not many libraries offering this functionality and the ones that do do not meet all the requirements.
 
 ## Demo
 
