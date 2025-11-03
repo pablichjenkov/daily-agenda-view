@@ -21,11 +21,14 @@ fun getEventHeight(event: Event): Dp {
  * For a given event, it returns the maximum number of sibling events, across all the slots the
  * event touches.
  * */
-fun getMaximumNumberOfSiblingsInContainingSlots(
+// TODO: This information can be computed in the data setup and saved in a
+// Map<Event, MaximumNumberOfSiblingsInContainingSlots>. Avoiding the iterations
+// during composition.
+private fun getMaximumNumberOfSiblingsInContainingSlots(
     event: Event,
     dailyAgendaState: DailyAgendaState
 ): Int {
-    val containingSlots = getSlotsIncludeStartSlot(event, dailyAgendaState)
+    val containingSlots = getSlotsIncludeStartSlot(event, dailyAgendaState.slots)
     val maxNumberOfEvents = containingSlots.fold(initial = 1) { maxNumberOfEvents, slot ->
         val numberOfEvents = dailyAgendaState.slotInfoMap[slot]?.getTotalColumnSpans() ?: 0
         if (numberOfEvents > maxNumberOfEvents) {
@@ -41,10 +44,10 @@ fun getMaximumNumberOfSiblingsInContainingSlots(
  * */
 fun getSlotsIncludeStartSlot(
     event: Event,
-    dailyAgendaState: DailyAgendaState
+    slots: List<Slot>
 ): List<Slot> {
-    val slotIndex = dailyAgendaState.slots.indexOf(event.startSlot)
-    val eventSlots = dailyAgendaState.slots.subList(slotIndex, dailyAgendaState.slots.size)
+    val slotIndex = slots.indexOf(event.startSlot)
+    val eventSlots = slots.subList(slotIndex, slots.size)
     val containingSlots = mutableListOf<Slot>()
     eventSlots.forEach { slot ->
         println("LayoutUtil: Checking slot: ${slot.title}")
@@ -107,7 +110,7 @@ internal fun updateEventOffsetX(
     }
 }
 
-fun Event.isSingleSlot(): Boolean {
+internal fun Event.isSingleSlot(): Boolean {
     return endTime - startTime < 0.6
 }
 
@@ -121,7 +124,7 @@ internal fun getEventWidthFromLeft(
     slotRemainingWidth: Dp,
     minimumWidth: Dp
 ): Dp {
-    if (dailyAgendaState.config.eventWidthType == EventWidthType.FixedSize) {
+    if (shouldReturnMinimumAllowedWidth(dailyAgendaState.config, event)) {
         return minimumWidth
     }
 
@@ -155,7 +158,7 @@ internal fun getEventWidthFromRight(
     slotRemainingWidth: Dp,
     minimumWidth: Dp
 ): Dp {
-    if (dailyAgendaState.config.eventWidthType == EventWidthType.FixedSize) {
+    if (shouldReturnMinimumAllowedWidth(dailyAgendaState.config, event)) {
         return minimumWidth
     }
 
@@ -177,4 +180,35 @@ internal fun getEventWidthFromRight(
     }
 
     return max(minimumWidth, eventWidth)
+}
+
+private fun shouldReturnMinimumAllowedWidth(
+    config: Config,
+    event: Event
+): Boolean {
+    when (val config = config) {
+        is Config.LeftToRight -> {
+            if (!config.lastEventFillRow) {
+                return true
+            }
+            if (!event.isSingleSlot()) {
+                return true
+            }
+            return false
+        }
+
+        is Config.MixedDirections -> {
+            return config.eventWidthType == EventWidthType.FixedSize
+        }
+
+        is Config.RightToLeft -> {
+            if (!config.lastEventFillRow) {
+                return true
+            }
+            if (!event.isSingleSlot()) {
+                return true
+            }
+            return false
+        }
+    }
 }

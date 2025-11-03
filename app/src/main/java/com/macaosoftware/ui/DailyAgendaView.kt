@@ -23,6 +23,8 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.macaosoftware.ui.data.Sample3
+import com.macaosoftware.ui.data.Slots
 import com.macaosoftware.ui.theme.CalendarTheme
 import kotlin.random.Random
 
@@ -64,7 +66,14 @@ private fun LeftThenRightLayout(
 ) {
     val minimumWidth = eventContainerWidth / dailyAgendaState.maxColumns
 
-    var arrangeToTheLeft = remember { true }
+    var arrangeToTheLeft = remember {
+        when (dailyAgendaState.config) {
+            is Config.LeftToRight,
+            is Config.MixedDirections -> true
+
+            is Config.RightToLeft -> false
+        }
+    }
 
     val offsetInfoMap = remember {
         mapOf<Slot, OffsetInfo>(
@@ -189,7 +198,9 @@ private fun LeftThenRightLayout(
             }
         }
 
-        arrangeToTheLeft = !arrangeToTheLeft
+        if (dailyAgendaState.config is Config.MixedDirections) {
+            arrangeToTheLeft = !arrangeToTheLeft
+        }
     }
 }
 
@@ -208,7 +219,13 @@ fun generateRandomColor(): Color {
 @Composable
 fun CalendarViewPreview() {
 
-    val dailyAgendaState = remember { DailyAgendaStateController().computeNextState() }
+    val dailyAgendaState = remember {
+        DailyAgendaStateController(
+            slots = Slots.slots,
+            slotToEventMap = Sample3(Slots.slots).slotToEventMap,
+            config = Config.RightToLeft()
+        ).computeNextState()
+    }
     CalendarTheme {
         Box(modifier = Modifier.size(600.dp, 1000.dp)) {
             DailyAgendaView(

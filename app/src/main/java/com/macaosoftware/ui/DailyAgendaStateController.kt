@@ -1,21 +1,25 @@
 package com.macaosoftware.ui
 
-import com.macaosoftware.ui.data.Sample3
-import com.macaosoftware.ui.data.Slots
-
-class DailyAgendaStateController {
-    val slots = Slots.slots
-    val sample3 = Sample3(slots)
+class DailyAgendaStateController(
+    val slots: List<Slot>,
+    val slotToEventMap: Map<Slot, List<Event>>,
+    val config: Config = Config.defaultValue()
+) {
 
     fun computeNextState(): DailyAgendaState {
 
-        val result = computeSlotInfo(slots = slots, slotToEventMap = sample3.slotToEventMap)
+        val result = computeSlotInfo(
+            slots = slots,
+            slotToEventMap = slotToEventMap,
+            config = config
+        )
 
         return DailyAgendaState(
             slots = slots,
-            slotToEventMap = sample3.slotToEventMap,
+            slotToEventMap = slotToEventMap,
             slotInfoMap = result.slotInfoMap,
-            maxColumns = result.maxColumns
+            maxColumns = result.maxColumns,
+            config = config
         )
     }
 
@@ -25,12 +29,19 @@ class DailyAgendaStateController {
      * */
     private fun computeSlotInfo(
         slots: List<Slot>,
-        slotToEventMap: Map<Slot, List<Event>>
+        slotToEventMap: Map<Slot, List<Event>>,
+        config: Config
     ): ComputeSlotInfoResult {
 
         val slotInfoMap = mutableMapOf<Slot, SlotInfo>()
         var maxColumns = 1
-        var isLeftIter = true
+
+        var isLeftIter = when (config) {
+            is Config.LeftToRight,
+            is Config.MixedDirections -> true
+
+            is Config.RightToLeft -> false
+        }
 
         slots.forEachIndexed { idx, slotIter ->
 
@@ -39,7 +50,7 @@ class DailyAgendaStateController {
 
             slotToEventMap[slotIter]?.forEachIndexed { idx, event ->
 
-                getFullSlotsRangeForEvent(event, slots).forEach { containingSlot ->
+                getSlotsIncludeStartSlot(event, slots).forEach { containingSlot ->
                     // Update column mark
                     if (isLeftIter) {
                         slotLeftColumnMap.put(containingSlot, idx + 1)
@@ -87,8 +98,9 @@ class DailyAgendaStateController {
                 println("DailyAgendaState: SlotInfoMap: ${it.key.title}, ${it.value}")
             }
 
-
-            isLeftIter = !isLeftIter
+            if (config is Config.MixedDirections) {
+                isLeftIter = !isLeftIter
+            }
         }
 
         slotInfoMap.entries.fold(1) { acc, entry ->
@@ -100,24 +112,6 @@ class DailyAgendaStateController {
         println("DailyAgendaState: maxColumns: $maxColumns")
         return ComputeSlotInfoResult(slotInfoMap, maxColumns)
     }
-
-    private fun getFullSlotsRangeForEvent(
-        event: Event,
-        slots: List<Slot>
-    ): List<Slot> {
-        val slotIndex = slots.indexOf(event.startSlot)
-        val eventSlots = slots.subList(slotIndex, slots.size)
-        val containingSlots = mutableListOf<Slot>()
-        eventSlots.forEach { slot ->
-            println("Sample3: Checking slot: ${slot.title}")
-            if (event.endTime > slot.time + 0.1) {
-                println("Sample3: slot: ${slot.title} contains event: ${event.title}")
-                containingSlots.add(slot)
-            }
-        }
-        return containingSlots
-    }
-
 }
 
 private class ComputeSlotInfoResult(

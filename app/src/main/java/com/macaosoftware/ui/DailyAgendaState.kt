@@ -6,10 +6,10 @@ import com.macaosoftware.ui.Config.Companion.defaultValue
 
 class DailyAgendaState(
     val slots: List<Slot>,
-    val slotToEventMap: Map<Slot, List<Event>>,// = sampleData.slotToEventMap
+    val slotToEventMap: Map<Slot, List<Event>>,
     val slotInfoMap: Map<Slot, SlotInfo>,
     val maxColumns: Int,
-    val config: Config = defaultValue()
+    val config: Config
 )
 
 class Slot(
@@ -44,14 +44,23 @@ internal class OffsetInfo(
     fun getTotalRightOffset() = rightStartOffset + rightAccumulated
 }
 
-data class Config(
-    val layoutType: LayoutType = LayoutType.MixedDirections,
-    val eventWidthType: EventWidthType = EventWidthType.VariableSize
-) {
+sealed class Config{
+
+    class MixedDirections(
+        val eventWidthType: EventWidthType = EventWidthType.VariableSize
+    ) : Config()
+
+    class LeftToRight(
+        val lastEventFillRow: Boolean = true
+    ) : Config()
+
+    class RightToLeft(
+        val lastEventFillRow: Boolean = true
+    ) : Config()
+
     companion object {
-        fun defaultValue(): Config = Config()
+        fun defaultValue(): Config = MixedDirections()
     }
 }
 
-enum class LayoutType { MixedDirections, LeftToRight, RightToLeft }
 enum class EventWidthType { FixedSize, VariableSize }

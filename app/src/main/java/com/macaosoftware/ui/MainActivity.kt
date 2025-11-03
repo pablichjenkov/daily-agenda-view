@@ -10,6 +10,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import com.macaosoftware.ui.data.Sample3
+import com.macaosoftware.ui.data.Slots
 import com.macaosoftware.ui.theme.CalendarTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,7 +27,11 @@ class MainActivity : ComponentActivity() {
                             .padding(paddingValues = innerPadding)
                     ) {
                         val dailyAgendaState = remember {
-                            DailyAgendaStateController().computeNextState()
+                            DailyAgendaStateController(
+                                slots = Slots.slots,
+                                slotToEventMap = Sample3(Slots.slots).slotToEventMap,
+                                config = Config.RightToLeft(lastEventFillRow = false)
+                            ).computeNextState()
                         }
                         DailyAgendaView(
                             dailyAgendaState = dailyAgendaState
