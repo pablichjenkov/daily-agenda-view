@@ -1,5 +1,15 @@
 ## Daily Agenda View
-This is a compose view useful for Apps that needs to present daily events or daily activities type of functionality. The idea came out after searching for a daily calendar similar to Microsotf Outlook App for Android. There seems to be not many libraries offering this functionality and the ones that do do not meet all the requirements.
+Daily Agenda View is a compose multiplatform component useful for Apps that need to present daily events or daily activities type of views. The idea came out after searching for a daily calendar similar to **Microsotf Outlook App for Android** but nothing came out of Github. There seems to be not many libraries offering this functionality and the ones that do, do not meet all the requirements.
+
+## Supported Targets
+
+| Platform | Supported |
+|----------|:---------:|
+| Android  |     ✅     |
+| iOS      |     ✅     |
+| Desktop  |     ✅     |
+| JS       |     ✅     |
+| Wasm     |     ✅     |
 
 ## How to use it
 Bellow there is some code snippets that illustrate the different configurations.
