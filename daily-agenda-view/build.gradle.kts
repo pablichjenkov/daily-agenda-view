@@ -7,14 +7,14 @@ plugins {
     alias(libs.plugins.androidKmpLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.vanniktech.mavenPublish)
 }
 
 kotlin {
     androidLibrary {
         namespace = "com.example.kmpfirstlib"
-        compileSdk = 36
-        minSdk = 24
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
 
         withJava() // enable java compilation support
         withHostTestBuilder {}.configure {}
@@ -75,6 +75,41 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+        }
+    }
+}
+
+mavenPublishing {
+    publishToMavenCentral(automaticRelease = true)
+    signAllPublications()
+
+    coordinates(
+        groupId = "io.github.pablichjenkov",
+        artifactId = "daily-agenda-view",
+        version = libs.versions.dailyAgendaView.get()
+    )
+
+    pom {
+        val projectGitUrl = "https://github.com/pablichjenkov/daily-agenda-view"
+        name = "daily-agenda-view"
+        description = "Ui component that displays daily events along a vertical timeline"
+        inceptionYear = "2025"
+        url = projectGitUrl
+        licenses {
+            license {
+                name.set("The Unlicense")
+                url.set("https://unlicense.org")
+            }
+        }
+        developers {
+            developer {
+                id = "pablichjenkov"
+            }
+        }
+        scm {
+            connection.set("scm:git:$projectGitUrl")
+            developerConnection.set("scm:git:$projectGitUrl")
+            url.set(projectGitUrl)
         }
     }
 }

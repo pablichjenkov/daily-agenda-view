@@ -27,7 +27,7 @@ fun App() {
                         slots = Slots.slots,
                         slotToEventMap = Sample3(Slots.slots).slotToEventMap,
                         config = Config.MixedDirections(
-                            eventWidthType = EventWidthType.FixedSizeFillLastEvent
+                            eventWidthType = EventWidthType.VariableSize
                         )
                     )
                 }
