@@ -1,7 +1,13 @@
 ## Daily Agenda View
 Daily Agenda View is a compose multiplatform component useful for Apps that need to present daily events or daily activities type of views. The idea came out after searching for a daily calendar similar to **Microsotf Outlook App for Android** but nothing came out of Github. There seems to be not many libraries offering this functionality and the ones that do, do not meet all the requirements.
 
-## Supported Targets
+```kotlin
+sourceSets {
+    commonMain.dependencies {
+        implementation("io.github.pablichjenkov:daily-agenda-view:0.1.0")
+    }
+}
+```
 
 | Platform | Supported |
 |----------|:---------:|
@@ -11,15 +17,6 @@ Daily Agenda View is a compose multiplatform component useful for Apps that need
 | JS       |     ✅     |
 | Wasm     |     ✅     |
 
-## Gradle Coordinates
-
-```kotlin
-sourceSets {
-    commonMain.dependencies {
-        implementation("io.github.pablichjenkov:daily-agenda-view:0.1.0")
-    }
-}
-```
 
 ## How to use it
 Bellow there is some code snippets that illustrate the different configurations.
