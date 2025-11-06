@@ -4,7 +4,7 @@ Daily Agenda View is a compose multiplatform component useful for Apps that need
 <BR/>
 Use cases:
 - Daily task planner apps.
-- App for venues which rent spaces based on time.
+- Apps for venues that rent office space based on time.
 - Tv Apps with show scheduling.
 - Music Festival Apps with events overlapping at the same time.
 - Anything that comes to your mind.
@@ -14,7 +14,7 @@ Use cases:
 ```kotlin
 sourceSets {
     commonMain.dependencies {
-        implementation("io.github.pablichjenkov:daily-agenda-view:0.1.0")
+        implementation("io.github.pablichjenkov:daily-agenda-view:0.2.0")
     }
 }
 ```
@@ -85,6 +85,14 @@ DailyAgendaView(dailyAgendaState = dailyAgendaState)
 ```
 
 <table>
+    <tr>
+        <td>
+            Events align with slot start/end time
+        </td>
+        <td>
+            Events do not align with slot start/end time
+        </td>
+    </tr>
     <tr>
         <td>
             <img width="250" alt="daily-agenda-mix-directions-same-width-fill-end" src="https://github.com/user-attachments/assets/f4db4ff1-700a-4af8-9ebe-a5969b2164b5" />
