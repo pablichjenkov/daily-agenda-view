@@ -14,7 +14,7 @@ Use cases:
 ```kotlin
 sourceSets {
     commonMain.dependencies {
-        implementation("io.github.pablichjenkov:daily-agenda-view:0.2.0")
+        implementation("io.github.pablichjenkov:daily-agenda-view:<latest-version>")
     }
 }
 ```
