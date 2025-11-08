@@ -2,9 +2,11 @@ package com.macaosoftware.ui.data
 
 import com.macaosoftware.ui.dailyagenda.Event
 import com.macaosoftware.ui.dailyagenda.Slot
+import com.macaosoftware.ui.dailyagenda.SlotsGenerator
 
-class Sample0(private val slots: List<Slot>) {
+class Sample0(slotsGenerator: SlotsGenerator) {
 
+    val slots: List<Slot> = slotsGenerator.slots
     val slotToEventMap = mutableMapOf<Slot, List<Event>>()
 
     init {
@@ -13,16 +15,16 @@ class Sample0(private val slots: List<Slot>) {
             slotToEventMap[slot] = emptyList()
         }
 
-        val slot8_00 = slots[8* Slots.slotScale]
+        val slot8_00 = slotsGenerator.getSlotForTime(8.0F)
         slotToEventMap[slot8_00] = createEventsFor800AM(startSlot = slot8_00)
 
-        val slot8_30 = slots[8* Slots.slotScale + 1]
+        val slot8_30 = slotsGenerator.getSlotForTime(8.5F)
         slotToEventMap[slot8_30] = createEventsFor830AM(startSlot = slot8_30)
 
-        val slot9_00 = slots[9* Slots.slotScale]
+        val slot9_00 = slotsGenerator.getSlotForTime(9.0F)
         slotToEventMap[slot9_00] = createEventsFor900AM(startSlot = slot9_00)
 
-        val slot9_30 = slots[9* Slots.slotScale + 1]
+        val slot9_30 = slotsGenerator.getSlotForTime(9.5F)
         slotToEventMap[slot9_30] = createEventsFor930AM(startSlot = slot9_30)
     }
 

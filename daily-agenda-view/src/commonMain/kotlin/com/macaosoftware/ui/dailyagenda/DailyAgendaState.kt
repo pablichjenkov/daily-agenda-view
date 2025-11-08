@@ -11,14 +11,15 @@ class DailyAgendaState(
     val config: Config
 )
 
-data class Slot(
+@ConsistentCopyVisibility
+data class Slot internal constructor(
     val title: String,
-    val time: Float,
-    val index: Int
+    val time: Float
 )
 
 // TODO: Change var with val SlotInfo.copy()
-data class SlotInfo(
+@ConsistentCopyVisibility
+data class SlotInfo internal constructor(
     var numberOfContainingEvents: Int,
     var numberOfColumnsLeft: Int,
     var numberOfColumnsRight: Int,
@@ -26,7 +27,7 @@ data class SlotInfo(
     fun getTotalColumnSpans() = numberOfColumnsLeft + numberOfColumnsRight
 }
 
-class Event(
+data class Event(
     val startSlot: Slot,
     val title: String,
     val startTime: Float,

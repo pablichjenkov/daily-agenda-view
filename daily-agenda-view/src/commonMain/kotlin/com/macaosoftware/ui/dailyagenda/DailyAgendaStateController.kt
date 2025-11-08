@@ -3,11 +3,12 @@ package com.macaosoftware.ui.dailyagenda
 import androidx.compose.runtime.mutableStateOf
 
 class DailyAgendaStateController(
-    private val slots: List<Slot>,
+    private val slotsGenerator: SlotsGenerator,
     slotToEventMap: Map<Slot, List<Event>>,
     private val config: Config
 ) {
 
+    private val slots = slotsGenerator.slots
     private val slotToEventMapSorted: MutableMap<Slot, MutableList<Event>> = mutableMapOf()
     val state = mutableStateOf<DailyAgendaState?>(null)
 
@@ -16,7 +17,12 @@ class DailyAgendaStateController(
          * Sort the events to maximize spacing when the layout runs.
          * */
         val endTimeComparator = Comparator { event1: Event, event2: Event ->
-            (event2.endTime - event1.endTime).toInt()
+            val diff = event2.endTime - event1.endTime
+            when {
+                (diff > 0F) -> 1
+                (diff < 0F) -> -1
+                else -> 0
+            }
         }
         slotToEventMap.entries.forEach { entry ->
             val eventsSortedByEndTime = entry.value.sortedWith(endTimeComparator).toMutableList()
@@ -25,11 +31,49 @@ class DailyAgendaStateController(
         updateState()
     }
 
+    fun addEvent(
+        startTime: Float,
+        endTime: Float,
+        title: String
+    ): Boolean {
+
+        val startSlot = slotsGenerator.getSlotForTime(startTime)
+        val siblingEvents = slotToEventMapSorted[startSlot]?.toMutableList() ?: return false
+
+        val index = siblingEvents.binarySearch(fromIndex = 0, toIndex = siblingEvents.lastIndex) {
+            val diff = it.endTime - endTime
+            when {
+                (diff > 0F) -> 1
+                (diff < 0F) -> -1
+                else -> 0
+            }
+        }
+        val insertionIndex = if (index < 0) -(index + 1) else index
+        siblingEvents.add(
+            insertionIndex,
+            Event(
+                startSlot = startSlot,
+                startTime = startTime,
+                endTime = endTime,
+                title = title
+            )
+        )
+
+        // Update state
+        updateState()
+        return true
+    }
+
     fun addEvent(event: Event): Boolean {
         val siblingEvents = slotToEventMapSorted[event.startSlot]?.toMutableList() ?: return false
 
         val index = siblingEvents.binarySearch(fromIndex = 0, toIndex = siblingEvents.lastIndex) {
-            (event.endTime - it.endTime).toInt()
+            val diff = it.endTime - event.endTime
+            when {
+                (diff > 0F) -> 1
+                (diff < 0F) -> -1
+                else -> 0
+            }
         }
         val insertionIndex = if (index < 0) -(index + 1) else index
         siblingEvents.add(insertionIndex, event)

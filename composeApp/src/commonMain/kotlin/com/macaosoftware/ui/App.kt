@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.macaosoftware.ui.dailyagenda.DailyAgendaStateController
 import com.macaosoftware.ui.dailyagenda.DailyAgendaView
+import com.macaosoftware.ui.dailyagenda.SlotsGenerator
 import com.macaosoftware.ui.data.Sample0
 import com.macaosoftware.ui.data.Sample1
 import com.macaosoftware.ui.data.Sample2
@@ -36,9 +37,10 @@ fun App() {
                     .padding(paddingValues = innerPadding)
             ) {
                 val stateController = remember {
+                    val slotsGenerator = SlotsGenerator()
                     DailyAgendaStateController(
-                        slots = Slots.slots,
-                        slotToEventMap = Sample3(Slots.slots).slotToEventMap,
+                        slotsGenerator = slotsGenerator,
+                        slotToEventMap = Sample0(slotsGenerator = slotsGenerator).slotToEventMap,
                         config = Slots.demoConfigLTR
                     )
                 }
@@ -76,9 +78,10 @@ private fun generateRandomColor(): Color {
 @Composable
 fun CalendarViewPreview() {
     val stateController = remember {
+        val slotsGenerator = SlotsGenerator()
         DailyAgendaStateController(
-            slots = Slots.slots,
-            slotToEventMap = Sample0(Slots.slots).slotToEventMap,
+            slotsGenerator = slotsGenerator,
+            slotToEventMap = Sample0(slotsGenerator = slotsGenerator).slotToEventMap,
             config = Slots.demoConfigLTR
         )
     }
