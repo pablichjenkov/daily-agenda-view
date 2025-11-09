@@ -4,9 +4,10 @@ Daily Agenda View is a compose multiplatform component useful for Apps that need
 <BR/>
 Use cases:
 - Daily task planner apps.
-- Apps for venues that rent office space based on time.
+- Appointment reservation or booking Apps.
 - Tv Apps with show scheduling.
 - Music Festival Apps with events overlapping at the same time.
+- Great for TODO Apps to show all the TODOs in a day timeline view.
 - Anything that comes to your mind.
 
 ## Gradle Setup
@@ -54,16 +55,39 @@ Bellow there is some code snippets that illustrate the different configurations.
 **1.** The default configuration if you don't specify any. In this mode the agenda view will try to maximize the events witdh. It achieves that by mixing the rows layout direction. **Even rows** are rendered from left to right while **odd rows** are rendered from right to left. Since the events are order by duration, this mode leverage the maximum space available by laying out in the opposite direction from the previous road. It should be very effective in most data use cases.
 
 ```kotlin
-val dailyAgendaState = remember {
-    DailyAgendaStateController(
-            slots = Slots.slots,
-            slotToEventMap = Sample3(Slots.slots).slotToEventMap,
-            config = Config.MixedDirections(eventWidthType = EventWidthType.VariableSize) // <-- Configuration
-        )
-        .computeNextState()
-}
+@Composable
+fun Box(modifier = Modifier.fillMaxSize()) {
 
-DailyAgendaView(dailyAgendaState = dailyAgendaState)
+  val dailyAgendaStateController = remember {
+    val slotsGenerator = TimeLineSlotsGenerator()
+    val demoConfigurations = DemoConfigurations(slotsGenerator)
+    val slotToEventMap = Sample3(slotsGenerator = slotsGenerator).slotToEventMap // Check Sample3 class in the demo, to see how to create the events timeline
+
+    DailyAgendaStateController(
+        slotsGenerator = slotsGenerator,
+        slotToEventMap = slotToEventMap,
+        config = demoConfigurations.demoConfigMixedDirections
+    )
+  }
+
+  dailyAgendaStateController.state.value?.let { dailyAgendaState ->
+    DailyAgendaView(dailyAgendaState = dailyAgendaState) { event ->
+        Box(
+            modifier =
+                Modifier.fillMaxSize().padding(2.dp).background(color = Color.LightGray)
+        ) {
+            Text(text = "${event.title}: ${event.startTime}-${event.endTime}")
+        }
+    }
+  }
+
+}
+```
+
+Above code is all you need to have a daily events timeline added to your App. Bellow is a showcase of the different layout configurations the component offers. 
+
+```kotlin
+config = Config.MixedDirections(eventWidthType = EventWidthType.VariableSize)
 ```
 
 <img width="300" alt="daily-agenda-mix-directions-variable-width" src="https://github.com/user-attachments/assets/a914051f-0da5-4bcf-9519-037bebae4cb5" />
@@ -73,16 +97,7 @@ DailyAgendaView(dailyAgendaState = dailyAgendaState)
 **2.** Similar to above, this mode also mixes the direction of the layout, even rows do LTR and odd rows fo RTL. But in this mode all the events have the same with. This is for the case where maximum space wants to be coverred but at the same time esthetic is needed.
 
 ```kotlin
-val dailyAgendaState = remember {
-    DailyAgendaStateController(
-            slots = Slots.slots,
-            slotToEventMap = Sample3(Slots.slots).slotToEventMap,
-            config = Config.MixedDirections(eventWidthType = EventWidthType.FixedSize) // <-- Configuration
-        )
-        .computeNextState()
-}
-
-DailyAgendaView(dailyAgendaState = dailyAgendaState)
+config = Config.MixedDirections(eventWidthType = EventWidthType.FixedSize)
 ```
 
 <img width="300" alt="daily-agenda-mix-directions-same-width" src="https://github.com/user-attachments/assets/f8b432fa-03b1-4764-852b-31de5e852dd1" />
@@ -92,16 +107,7 @@ DailyAgendaView(dailyAgendaState = dailyAgendaState)
 **3.** This mode is just like number 2 but expand the single slot events to occupy the full row available width.
 
 ```kotlin
-val dailyAgendaState = remember {
-    DailyAgendaStateController(
-            slots = Slots.slots,
-            slotToEventMap = Sample3(Slots.slots).slotToEventMap,
-            config = Config.MixedDirections(eventWidthType = EventWidthType.FixedSizeFillLastEvent) // <-- Configuration
-        )
-        .computeNextState()
-}
-
-DailyAgendaView(dailyAgendaState = dailyAgendaState)
+config = Config.MixedDirections(eventWidthType = EventWidthType.FixedSizeFillLastEvent)
 ```
 
 <table>
@@ -127,16 +133,7 @@ DailyAgendaView(dailyAgendaState = dailyAgendaState)
 **4.** Instead of maximizing space consumption, an App might want consistency laying out the daily calendar events. Bellow mode renders from left to right always and also expand the single slot events to occupy the full row available width.
 
 ```kotlin
-val dailyAgendaState = remember {
-    DailyAgendaStateController(
-            slots = Slots.slots,
-            slotToEventMap = Sample3(Slots.slots).slotToEventMap,
-            config = Config.LeftToRight(lastEventFillRow = true) // <-- Configuration
-        )
-        .computeNextState()
-}
-
-DailyAgendaView(dailyAgendaState = dailyAgendaState)
+config = Config.LeftToRight(lastEventFillRow = true)
 ```
 
 <img width="300" alt="daily-agenda-LTR-fill-end" src="https://github.com/user-attachments/assets/a67d206c-c92f-4eee-b0b6-64ce4fcaa823" />
@@ -146,16 +143,7 @@ DailyAgendaView(dailyAgendaState = dailyAgendaState)
 **5.** Similar to number 4 but in this case we want all the events to have the same width.
 
 ```kotlin
-val dailyAgendaState = remember {
-    DailyAgendaStateController(
-            slots = Slots.slots,
-            slotToEventMap = Sample3(Slots.slots).slotToEventMap,
-            config = Config.LeftToRight(lastEventFillRow = false) // <-- Configuration
-        )
-        .computeNextState()
-}
-
-DailyAgendaView(dailyAgendaState = dailyAgendaState)
+config = Config.LeftToRight(lastEventFillRow = false)
 ```
 
 <img width="300" alt="daily-agenda-LTR-no-fill-end" src="https://github.com/user-attachments/assets/a4595b2e-9b29-4bbd-8a4d-6b8c3688163d" />
@@ -165,16 +153,7 @@ DailyAgendaView(dailyAgendaState = dailyAgendaState)
 **6.** The same as number 4 but from Right to left. Could be useful in countries where languages are written/read from right to left.
 
 ```kotlin
-val dailyAgendaState = remember {
-    DailyAgendaStateController(
-            slots = Slots.slots,
-            slotToEventMap = Sample3(Slots.slots).slotToEventMap,
-            config = Config.RightToLeft(lastEventFillRow = true) // <-- Configuration
-        )
-        .computeNextState()
-}
-
-DailyAgendaView(dailyAgendaState = dailyAgendaState)
+config = Config.RightToLeft(lastEventFillRow = true)
 ```
 
 <img width="300" alt="daily-agenda-RTL-fill-end" src="https://github.com/user-attachments/assets/aef40594-2ba2-4c00-b93c-8f9eec8b30d2" />
@@ -184,16 +163,7 @@ DailyAgendaView(dailyAgendaState = dailyAgendaState)
 **7.** The same as number 5 but from Right to left.
 
 ```kotlin
-val dailyAgendaState = remember {
-    DailyAgendaStateController(
-            slots = Slots.slots,
-            slotToEventMap = Sample3(Slots.slots).slotToEventMap,
-            config = Config.RightToLeft(lastEventFillRow = false) // <-- Configuration
-        )
-        .computeNextState()
-}
-
-DailyAgendaView(dailyAgendaState = dailyAgendaState)
+config = Config.RightToLeft(lastEventFillRow = false)
 ```
 
 <img width="300" alt="daily-agenda-RTL-no-fill-end" src="https://github.com/user-attachments/assets/9994e98d-6d2d-4168-b2b4-59ac45e5210e" />
