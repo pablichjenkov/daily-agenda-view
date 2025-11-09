@@ -10,15 +10,7 @@ Use cases:
 - Great for TODO Apps to show all the TODOs in a day timeline view.
 - Anything that comes to your mind.
 
-## Gradle Setup
-
-```kotlin
-sourceSets {
-    commonMain.dependencies {
-        implementation("io.github.pablichjenkov:daily-agenda-view:<latest-version>")
-    }
-}
-```
+## Support and Compatibility
 
 <table>
 <tr>
@@ -50,9 +42,18 @@ sourceSets {
 
 
 ## How to use it
-Bellow there is some code snippets that illustrate the different configurations.
 
-**1.** The default configuration if you don't specify any. In this mode the agenda view will try to maximize the events witdh. It achieves that by mixing the rows layout direction. **Even rows** are rendered from left to right while **odd rows** are rendered from right to left. Since the events are order by duration, this mode leverage the maximum space available by laying out in the opposite direction from the previous road. It should be very effective in most data use cases.
+Add the gradle coordinates:
+
+```kotlin
+sourceSets {
+    commonMain.dependencies {
+        implementation("io.github.pablichjenkov:daily-agenda-view:<latest-version>")
+    }
+}
+```
+
+Then add a **DailyAgendaView** in your Composable function like in the code snippet bellow:
 
 ```kotlin
 @Composable
@@ -85,6 +86,8 @@ fun Box(modifier = Modifier.fillMaxSize()) {
 ```
 
 Above code is all you need to have a daily events timeline added to your App. Bellow is a showcase of the different layout configurations the component offers. 
+
+**1.** The default configuration if you don't specify any. In this mode the agenda view will try to maximize the events witdh. It achieves that by mixing the rows layout direction. **Even rows** are rendered from left to right while **odd rows** are rendered from right to left. Since the events are order by duration, this mode leverage the maximum space available by laying out in the opposite direction from the previous road. It should be very effective in most data use cases.
 
 ```kotlin
 config = Config.MixedDirections(eventWidthType = EventWidthType.VariableSize)
