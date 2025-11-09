@@ -20,8 +20,12 @@ sourceSets {
 ```
 
 <table>
-<tr><th>Platform Support</th><th>Kotlin Compatibility</th></tr>
-<tr><td>
+<tr>
+      <th>Platform Support</th>
+      <th>Kotlin Compatibility</th>
+</tr>
+<tr>
+  <td>
 
 | Platform | Supported |
 |----------|:---------:|
@@ -31,15 +35,16 @@ sourceSets {
 | JS       |     ✅     |
 | Wasm     |     ✅     |
 
-</td>
-<td>
+  </td>
+  <td>
 
 |Agenda Version|Kotlin Version|
 |--|--|
-|0.2.0|2.2.21|
-|0.3.0|2.2.21|
+|0.5.0|2.2.21|
+|0.4.0|2.2.21|
 
-</td></tr>
+  </td>
+</tr>
 </table>
 
 
