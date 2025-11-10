@@ -10,7 +10,7 @@ class DemoConfigurations(slotsGenerator: SlotsGenerator) {
         lastEventFillRow = true,
         initialSlotValue = 0.0F,
         slotScale = slotsGenerator.slotScale,
-        slotHeight = 96,
+        slotHeight = 64,
         timelineLeftPadding = 72
     )
 
@@ -18,7 +18,7 @@ class DemoConfigurations(slotsGenerator: SlotsGenerator) {
         lastEventFillRow = true,
         initialSlotValue = 0.0F,
         slotScale = slotsGenerator.slotScale,
-        slotHeight = 96,
+        slotHeight = 64,
         timelineLeftPadding = 72
     )
 
@@ -26,7 +26,7 @@ class DemoConfigurations(slotsGenerator: SlotsGenerator) {
         eventWidthType = EventWidthType.FixedSizeFillLastEvent,
         initialSlotValue = 0.0F,
         slotScale = slotsGenerator.slotScale,
-        slotHeight = 96,
+        slotHeight = 64,
         timelineLeftPadding = 72
     )
 }
