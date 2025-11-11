@@ -31,9 +31,9 @@ Use cases:
   </td>
   <td>
 
-|Agenda Version|Kotlin Version|
-|--|--|
-|0.7.0|2.2.21|
+|Agenda Version|Kotlin Version| CMP Version |
+|--|--|--|
+|0.7.0|2.2.21|1.9.2|
 
   </td>
 </tr>
