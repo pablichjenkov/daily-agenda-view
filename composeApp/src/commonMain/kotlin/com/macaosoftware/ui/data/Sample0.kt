@@ -29,7 +29,7 @@ class Sample0(slotsController: SlotsController) {
     }
 
     fun createEventsFor800AM(startSlot: Slot): List<Event> {
-        return listOf(
+        return slotToEventMap[startSlot]!! + listOf(
             Event(
                 startSlot = startSlot,
                 title = "Ev 1",
@@ -52,7 +52,7 @@ class Sample0(slotsController: SlotsController) {
     }
 
     fun createEventsFor830AM(startSlot: Slot): List<Event> {
-        return listOf(
+        return slotToEventMap[startSlot]!! + listOf(
             Event(
                 startSlot = startSlot,
                 title = "Evt 4",
@@ -81,7 +81,7 @@ class Sample0(slotsController: SlotsController) {
     }
 
     fun createEventsFor900AM(startSlot: Slot): List<Event> {
-        return listOf(
+        return slotToEventMap[startSlot]!! + listOf(
             Event(
                 startSlot = startSlot,
                 title = "Evt 8",
@@ -98,7 +98,7 @@ class Sample0(slotsController: SlotsController) {
     }
 
     fun createEventsFor930AM(startSlot: Slot): List<Event> {
-        return listOf(
+        return slotToEventMap[startSlot]!! + listOf(
             Event(
                 startSlot = startSlot,
                 title = "Evt 10",

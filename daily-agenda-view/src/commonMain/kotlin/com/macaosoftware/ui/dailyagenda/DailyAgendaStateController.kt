@@ -18,8 +18,6 @@ class DailyAgendaStateController(
     private val slots = slotsController.slots
     private val slotToEventMapSorted: MutableMap<Slot, MutableList<Event>> = mutableMapOf()
 
-    val state = mutableStateOf<DailyAgendaState>(value = computeNextState())
-
     init {
         /**
          * Sort the events to maximize spacing when the layout runs.
@@ -36,8 +34,13 @@ class DailyAgendaStateController(
             val eventsSortedByEndTime = entry.value.sortedWith(endTimeComparator).toMutableList()
             slotToEventMapSorted.put(entry.key, eventsSortedByEndTime)
         }
-        updateState()
     }
+
+    /**
+     * This have to be declared after init{} execution. To guarantee that there is data in the
+     * slotToEventMapSorted and that the events are sorted.
+     */
+    val state = mutableStateOf<DailyAgendaState>(value = computeNextState())
 
     fun addEvent(
         startTime: Float,
@@ -183,16 +186,8 @@ class DailyAgendaStateController(
                     ?: 0
             }
 
-
-            println("DailyAgendaState: ============== Slot: ${slotIter.title} ================")
-            slotLeftColumnMap.entries.forEach {
-                println("DailyAgendaState: slotLeftColumnMap: ${it.key.title}, ${it.value}")
-            }
-            println("DailyAgendaState: +++++++++++++++ slotInfoMap: +++++++++++++++")
-            slotInfoMap.entries.forEach {
-                println("DailyAgendaState: SlotInfoMap: ${it.key.title}, ${it.value}")
-            }
-
+            // In the case of eventsArrangement == EventsArrangement.MixedDirections, then
+            // lets change the layout direction.
             if (config.eventsArrangement is EventsArrangement.MixedDirections) {
                 isLeftIter = !isLeftIter
             }
@@ -201,7 +196,6 @@ class DailyAgendaStateController(
         slotInfoMap.entries.fold(1) { acc, entry ->
             val slotColumns = entry.value.getTotalColumnSpans()
             if (slotColumns > maxColumns) maxColumns = slotColumns
-            println("DailyAgendaState: SlotInfoMap: ${entry.value}")
             maxColumns
         }
         println("DailyAgendaState: maxColumns: $maxColumns")

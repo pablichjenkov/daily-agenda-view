@@ -38,13 +38,12 @@ fun App() {
                     .padding(paddingValues = innerPadding)
             ) {
                 val stateController = remember {
-                    val demoSlotConfiguration = SlotConfig()
-                    val slotsController =
-                        TimeLineSlotsController(slotConfig = demoSlotConfiguration)
+                    val slotConfig = SlotConfig(slotScale = 1, slotHeight = 100)
+                    val slotsController = TimeLineSlotsController(slotConfig = slotConfig)
 
                     DailyAgendaStateController(
                         slotsController = slotsController,
-                        slotToEventMap = Sample3(slotsController = slotsController).slotToEventMap,
+                        slotToEventMap = Sample0(slotsController = slotsController).slotToEventMap,
                         eventsArrangement = EventsArrangement.LeftToRight()
                     )
                 }

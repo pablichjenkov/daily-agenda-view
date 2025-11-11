@@ -6,15 +6,6 @@ private const val HOUR_AM = "AM"
 private const val HOUR_PM = "PM"
 private const val MINUTES_IN_ONE_HOUR = 60
 
-data class HourAndMinute(val hour: Int, val minute: Int)
-
-data class HourAndMinuteEvent(
-    val startSlot: Slot,
-    val title: String,
-    val startTime: HourAndMinute,
-    val endTime: HourAndMinute
-)
-
 data class LocalTimeEvent(
     val startSlot: Slot,
     val title: String,
@@ -22,26 +13,10 @@ data class LocalTimeEvent(
     val endTime: LocalTime
 )
 
-data class HourAndMinuteSlot(
-    val title: String,
-    val hourAndMinute: HourAndMinute
-)
-
 data class LocalTimeSlot(
     val title: String,
     val localTime: LocalTime
 )
-
-fun Event.toHourAndMinuteEvent(): HourAndMinuteEvent {
-    val startTimeHourAndMinute = fromValueToHourAndMinute(value = startValue)
-    val endTimeHourAndMinute = fromValueToHourAndMinute(value = endValue)
-    return HourAndMinuteEvent(
-        startSlot = startSlot,
-        title = title,
-        startTime = startTimeHourAndMinute,
-        endTime = endTimeHourAndMinute
-    )
-}
 
 fun Event.toLocalTimeEvent(): LocalTimeEvent {
     val startLocalTime = fromValueToLocalTime(value = startValue)
@@ -54,54 +29,14 @@ fun Event.toLocalTimeEvent(): LocalTimeEvent {
     )
 }
 
-fun HourAndMinuteEvent.toEvent(): Event {
-    val startTimeValue = fromHourAndMinuteToValue(
-        hour = startTime.hour,
-        minute = startTime.minute
-    )
-    val endTimeValue = fromHourAndMinuteToValue(
-        hour = endTime.hour,
-        minute = endTime.minute
-    )
-    return Event(
-        startSlot = startSlot,
-        title = title,
-        startValue = startTimeValue,
-        endValue = endTimeValue
-    )
-}
-
 fun LocalTimeEvent.toEvent(): Event {
-    val startTimeValue = fromHourAndMinuteToValue(
-        hour = startTime.hour,
-        minute = startTime.minute
-    )
-    val endTimeValue = fromHourAndMinuteToValue(
-        hour = endTime.hour,
-        minute = endTime.minute
-    )
+    val startTimeValue = fromLocalTimeToValue(localTime = startTime)
+    val endTimeValue = fromLocalTimeToValue(localTime = endTime)
     return Event(
         startSlot = startSlot,
         title = title,
         startValue = startTimeValue,
         endValue = endTimeValue
-    )
-}
-
-fun Slot.toHourAndMinuteSlot(): HourAndMinuteSlot {
-    return HourAndMinuteSlot(
-        title = title,
-        hourAndMinute = fromValueToHourAndMinute(value = value)
-    )
-}
-
-fun HourAndMinuteSlot.toSlot(): Slot {
-    return Slot(
-        title = title,
-        value = fromHourAndMinuteToValue(
-            hour = hourAndMinute.hour,
-            minute = hourAndMinute.minute
-        )
     )
 }
 
@@ -115,23 +50,13 @@ fun Slot.toLocalTimeSlot(): LocalTimeSlot {
 fun LocalTimeSlot.toSlot(): Slot {
     return Slot(
         title = title,
-        value = fromHourAndMinuteToValue(
-            hour = localTime.hour,
-            minute = localTime.minute
-        )
+        value = fromLocalTimeToValue(localTime = localTime)
     )
 }
 
-fun fromHourAndMinuteToValue(hour: Int, minute: Int): Float {
-    val minuteFraction = minute.toFloat() / MINUTES_IN_ONE_HOUR
-    return hour.toFloat() + minuteFraction
-}
-
-fun fromValueToHourAndMinute(value: Float): HourAndMinute {
-    val remaining = value % 1
-    val minutes = (remaining * MINUTES_IN_ONE_HOUR).toInt()
-    val hours = value.toInt()
-    return HourAndMinute(hour = hours, minute = minutes)
+internal fun fromLocalTimeToValue(localTime: LocalTime): Float {
+    val minuteFraction = localTime.minute.toFloat() / MINUTES_IN_ONE_HOUR
+    return localTime.hour.toFloat() + minuteFraction
 }
 
 fun fromValueToLocalTime(value: Float): LocalTime {

@@ -53,9 +53,7 @@ internal fun getSlotsIncludeStartSlot(
     val eventSlots = slots.subList(slotIndex, slots.size)
     val containingSlots = mutableListOf<Slot>()
     eventSlots.forEach { slot ->
-        println("LayoutUtil: Checking slot: ${slot.title}")
         if (event.endValue > slot.value + 0.0001) {
-            println("LayoutUtil: slot: ${slot.title} contains event: ${event.title}")
             containingSlots.add(slot)
         }
     }
@@ -74,7 +72,6 @@ internal fun getSlotsIgnoreStartSlot(
     val containingSlots = mutableListOf<Slot>()
     laterSlots.forEach { slot ->
         if (event.endValue > slot.value + 0.0001) {
-            println("LayoutUtil: slot: ${slot.title} contains event: ${event.title}")
             containingSlots.add(slot)
         }
     }
