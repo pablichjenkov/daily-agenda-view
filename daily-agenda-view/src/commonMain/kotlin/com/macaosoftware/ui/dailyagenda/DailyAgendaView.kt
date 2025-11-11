@@ -79,17 +79,17 @@ private fun LeftThenRightLayout(
     val minimumWidth = eventContainerWidth / dailyAgendaState.maxColumns
 
     var arrangeToTheLeft = remember(key1 = dailyAgendaState, key2 = eventContainerWidth) {
-        when (config) {
-            is Config.LeftToRight,
-            is Config.MixedDirections -> true
+        when (config.eventsArrangement) {
+            is EventsArrangement.LeftToRight,
+            is EventsArrangement.MixedDirections -> true
 
-            is Config.RightToLeft -> false
+            is EventsArrangement.RightToLeft -> false
         }
     }
 
     val offsetInfoMap = remember(key1 = dailyAgendaState, key2 = eventContainerWidth) {
         val offsetMap = mutableMapOf<Slot, OffsetInfo>()
-        for (i in 0 .. dailyAgendaState.slots.lastIndex) {
+        for (i in 0..dailyAgendaState.slots.lastIndex) {
             offsetMap.put(dailyAgendaState.slots[i], OffsetInfo())
         }
         offsetMap
@@ -97,7 +97,7 @@ private fun LeftThenRightLayout(
 
     dailyAgendaState.slotToEventMap.entries.forEach { entry ->
         val slot = entry.key
-        val numbersOfSlots = (slot.time - config.initialSlotValue) * config.slotScale
+        val numbersOfSlots = (slot.value - config.initialSlotValue) * config.slotScale
         val offsetY = (numbersOfSlots * config.slotHeight).dp
 
         var offsetXAbsolute: Dp = 0.dp
@@ -185,7 +185,7 @@ private fun LeftThenRightLayout(
             }
         }
 
-        if (dailyAgendaState.config is Config.MixedDirections) {
+        if (dailyAgendaState.config.eventsArrangement is EventsArrangement.MixedDirections) {
             arrangeToTheLeft = !arrangeToTheLeft
         }
     }

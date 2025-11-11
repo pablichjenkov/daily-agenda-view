@@ -2,11 +2,11 @@ package com.macaosoftware.ui.data
 
 import com.macaosoftware.ui.dailyagenda.Event
 import com.macaosoftware.ui.dailyagenda.Slot
-import com.macaosoftware.ui.dailyagenda.SlotsGenerator
+import com.macaosoftware.ui.dailyagenda.SlotsController
 
-class Sample3(slotsGenerator: SlotsGenerator) {
+class Sample3(slotsController: SlotsController) {
 
-    val slots: List<Slot> = slotsGenerator.slots
+    val slots: List<Slot> = slotsController.slots
     val slotToEventMap = mutableMapOf<Slot, List<Event>>()
 
     init {
@@ -15,22 +15,22 @@ class Sample3(slotsGenerator: SlotsGenerator) {
             slotToEventMap[slot] = emptyList()
         }
 
-        val slot8_00 = slotsGenerator.getSlotForTime(8.0F)
+        val slot8_00 = slotsController.getSlotForValue(8.0F)
         slotToEventMap[slot8_00] = createEventsFor800AM(startSlot = slot8_00)
 
-        val slot8_30 = slotsGenerator.getSlotForTime(8.5F)
+        val slot8_30 = slotsController.getSlotForValue(8.5F)
         slotToEventMap[slot8_30] = createEventsFor830AM(startSlot = slot8_30)
 
-        val slot9_00 = slotsGenerator.getSlotForTime(9.0F)
+        val slot9_00 = slotsController.getSlotForValue(9.0F)
         slotToEventMap[slot9_00] = createEventsFor900AM(startSlot = slot9_00)
 
-        val slot9_30 = slotsGenerator.getSlotForTime(9.5F)
+        val slot9_30 = slotsController.getSlotForValue(9.5F)
         slotToEventMap[slot9_30] = createEventsFor930AM(startSlot = slot9_30)
 
-        val slot10_00 = slotsGenerator.getSlotForTime(10.0F)
+        val slot10_00 = slotsController.getSlotForValue(10.0F)
         slotToEventMap[slot10_00] = createEventsFor10_00AM(startSlot = slot10_00)
 
-        val slot10_30 = slotsGenerator.getSlotForTime(10.5F)
+        val slot10_30 = slotsController.getSlotForValue(10.5F)
         slotToEventMap[slot10_30] = createEventsFor10_30AM(startSlot = slot10_30)
     }
 
@@ -39,26 +39,26 @@ class Sample3(slotsGenerator: SlotsGenerator) {
             Event(
                 startSlot = startSlot,
                 title = "Ev 1",
-                startTime = 8.0F,
-                endTime = 12.0F
+                startValue = 8.0F,
+                endValue = 12.0F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Ev 2",
-                startTime = 8.0F,
-                endTime = 10.0F
+                startValue = 8.0F,
+                endValue = 10.0F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Ev 3",
-                startTime = 8.0F,
-                endTime = 9.0F
+                startValue = 8.0F,
+                endValue = 9.0F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Ev 4",
-                startTime = 8.0F,
-                endTime = 8.5F
+                startValue = 8.0F,
+                endValue = 8.5F
             )
         )
     }
@@ -68,26 +68,26 @@ class Sample3(slotsGenerator: SlotsGenerator) {
             Event(
                 startSlot = startSlot,
                 title = "Evt 5",
-                startTime = 8.5F,
-                endTime = 12.5F
+                startValue = 8.5F,
+                endValue = 12.5F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 6",
-                startTime = 8.5F,
-                endTime = 10.5F
+                startValue = 8.5F,
+                endValue = 10.5F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 7",
-                startTime = 8.5F,
-                endTime = 9.5F
+                startValue = 8.5F,
+                endValue = 9.5F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 8",
-                startTime = 8.5F,
-                endTime = 9.0F
+                startValue = 8.5F,
+                endValue = 9.0F
             ),
         )
     }
@@ -97,26 +97,26 @@ class Sample3(slotsGenerator: SlotsGenerator) {
             Event(
                 startSlot = startSlot,
                 title = "Evt 9",
-                startTime = 9.0F,
-                endTime = 11.0F
+                startValue = 9.0F,
+                endValue = 11.0F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 10",
-                startTime = 9.0F,
-                endTime = 10.5F
+                startValue = 9.0F,
+                endValue = 10.5F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 11",
-                startTime = 9.0F,
-                endTime = 10.0F
+                startValue = 9.0F,
+                endValue = 10.0F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 12",
-                startTime = 9.0F,
-                endTime = 10.0F
+                startValue = 9.0F,
+                endValue = 10.0F
             )
         )
     }
@@ -126,26 +126,26 @@ class Sample3(slotsGenerator: SlotsGenerator) {
             Event(
                 startSlot = startSlot,
                 title = "Evt 13",
-                startTime = 9.5F,
-                endTime = 11.0F
+                startValue = 9.5F,
+                endValue = 11.0F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 14",
-                startTime = 9.5F,
-                endTime = 10.5F
+                startValue = 9.5F,
+                endValue = 10.5F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 15",
-                startTime = 9.5F,
-                endTime = 10.0F
+                startValue = 9.5F,
+                endValue = 10.0F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 16",
-                startTime = 9.5F,
-                endTime = 10.0F
+                startValue = 9.5F,
+                endValue = 10.0F
             )
         )
     }
@@ -155,26 +155,26 @@ class Sample3(slotsGenerator: SlotsGenerator) {
             Event(
                 startSlot = startSlot,
                 title = "Evt 17",
-                startTime = 10.0F,
-                endTime = 11.5F
+                startValue = 10.0F,
+                endValue = 11.5F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 18",
-                startTime = 10.0F,
-                endTime = 11.0F
+                startValue = 10.0F,
+                endValue = 11.0F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 19",
-                startTime = 10.0F,
-                endTime = 10.5F
+                startValue = 10.0F,
+                endValue = 10.5F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 20",
-                startTime = 10.0F,
-                endTime = 10.5F
+                startValue = 10.0F,
+                endValue = 10.5F
             )
         )
     }
@@ -184,26 +184,26 @@ class Sample3(slotsGenerator: SlotsGenerator) {
             Event(
                 startSlot = startSlot,
                 title = "Evt 21",
-                startTime = 10.5F,
-                endTime = 11.5F
+                startValue = 10.5F,
+                endValue = 11.5F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 22",
-                startTime = 10.5F,
-                endTime = 11.0F
+                startValue = 10.5F,
+                endValue = 11.0F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 23",
-                startTime = 10.5F,
-                endTime = 11.0F
+                startValue = 10.5F,
+                endValue = 11.0F
             ),
             Event(
                 startSlot = startSlot,
                 title = "Evt 24",
-                startTime = 10.5F,
-                endTime = 11.0F
+                startValue = 10.5F,
+                endValue = 11.0F
             )
         )
     }

@@ -14,7 +14,7 @@ class DailyAgendaState(
 @ConsistentCopyVisibility
 data class Slot internal constructor(
     val title: String,
-    val time: Float
+    val value: Float
 )
 
 // TODO: Change var with val SlotInfo.copy()
@@ -30,8 +30,8 @@ data class SlotInfo internal constructor(
 data class Event(
     val startSlot: Slot,
     val title: String,
-    val startTime: Float,
-    val endTime: Float
+    val startValue: Float,
+    val endValue: Float
 )
 
 internal class OffsetInfo(
@@ -45,36 +45,35 @@ internal class OffsetInfo(
     fun getTotalRightOffset() = rightStartOffset + rightAccumulated
 }
 
-sealed class Config(
-    open val initialSlotValue: Float = 0.0F,
-    open val slotScale: Int = 1,
-    open val slotHeight: Int = 72,
-    open val timelineLeftPadding: Int = 72
-) {
+data class SlotConfig(
+    val initialSlotValue: Float = 0.0F,
+    val slotScale: Int = 2,
+    val slotHeight: Int = 64,
+    val timelineLeftPadding: Int = 72
+)
+
+data class Config(
+    val eventsArrangement: EventsArrangement = EventsArrangement.MixedDirections(),
+    val initialSlotValue: Float,
+    val slotScale: Int,
+    val slotHeight: Int,
+    val timelineLeftPadding: Int
+)
+
+sealed interface EventsArrangement {
 
     class MixedDirections(
         val eventWidthType: EventWidthType = EventWidthType.MaxVariableSize,
-        override val initialSlotValue: Float,
-        override val slotScale: Int,
-        override val slotHeight: Int,
-        override val timelineLeftPadding: Int
-    ) : Config()
+    ) : EventsArrangement {
+
+        enum class EventWidthType { MaxVariableSize, FixedSize, FixedSizeFillLastEvent }
+    }
 
     class LeftToRight(
-        val lastEventFillRow: Boolean = true,
-        override val initialSlotValue: Float,
-        override val slotScale: Int,
-        override val slotHeight: Int,
-        override val timelineLeftPadding: Int
-    ) : Config()
+        val lastEventFillRow: Boolean = true
+    ) : EventsArrangement
 
     class RightToLeft(
-        val lastEventFillRow: Boolean = true,
-        override val initialSlotValue: Float,
-        override val slotScale: Int,
-        override val slotHeight: Int,
-        override val timelineLeftPadding: Int
-    ) : Config()
+        val lastEventFillRow: Boolean = true
+    ) : EventsArrangement
 }
-
-enum class EventWidthType { MaxVariableSize, FixedSize, FixedSizeFillLastEvent }

@@ -3,15 +3,21 @@ package com.macaosoftware.ui.dailyagenda
 import androidx.compose.runtime.mutableStateOf
 
 class DailyAgendaStateController(
-    private val slotsGenerator: SlotsGenerator,
+    private val slotsController: SlotsController,
     slotToEventMap: Map<Slot, List<Event>>,
-    private val config: Config
+    private val eventsArrangement: EventsArrangement
 ) {
 
-    private val slots = slotsGenerator.slots
+    private val config = Config(
+        eventsArrangement = eventsArrangement,
+        initialSlotValue = slotsController.firstSlot.value,
+        slotScale = slotsController.slotScale,
+        slotHeight = slotsController.slotHeight,
+        timelineLeftPadding = 72
+    )
+    private val slots = slotsController.slots
     private val slotToEventMapSorted: MutableMap<Slot, MutableList<Event>> = mutableMapOf()
 
-    // TODO: Make this non nullable by selecting a good default value
     val state = mutableStateOf<DailyAgendaState>(value = computeNextState())
 
     init {
@@ -19,7 +25,7 @@ class DailyAgendaStateController(
          * Sort the events to maximize spacing when the layout runs.
          * */
         val endTimeComparator = Comparator { event1: Event, event2: Event ->
-            val diff = event2.endTime - event1.endTime
+            val diff = event2.endValue - event1.endValue
             when {
                 (diff > 0F) -> 1
                 (diff < 0F) -> -1
@@ -39,11 +45,11 @@ class DailyAgendaStateController(
         title: String
     ): Boolean {
 
-        val startSlot = slotsGenerator.getSlotForTime(startTime)
+        val startSlot = slotsController.getSlotForValue(startValue = startTime)
         val siblingEvents = slotToEventMapSorted[startSlot]?.toMutableList() ?: return false
 
         val index = siblingEvents.binarySearch(fromIndex = 0, toIndex = siblingEvents.lastIndex) {
-            val diff = it.endTime - endTime
+            val diff = it.endValue - endTime
             when {
                 (diff > 0F) -> 1
                 (diff < 0F) -> -1
@@ -55,8 +61,8 @@ class DailyAgendaStateController(
             insertionIndex,
             Event(
                 startSlot = startSlot,
-                startTime = startTime,
-                endTime = endTime,
+                startValue = startTime,
+                endValue = endTime,
                 title = title
             )
         )
@@ -70,7 +76,7 @@ class DailyAgendaStateController(
         val siblingEvents = slotToEventMapSorted[event.startSlot]?.toMutableList() ?: return false
 
         val index = siblingEvents.binarySearch(fromIndex = 0, toIndex = siblingEvents.lastIndex) {
-            val diff = it.endTime - event.endTime
+            val diff = it.endValue - event.endValue
             when {
                 (diff > 0F) -> 1
                 (diff < 0F) -> -1
@@ -125,11 +131,11 @@ class DailyAgendaStateController(
         val slotInfoMap = mutableMapOf<Slot, SlotInfo>()
         var maxColumns = 1
 
-        var isLeftIter = when (config) {
-            is Config.LeftToRight,
-            is Config.MixedDirections -> true
+        var isLeftIter = when (config.eventsArrangement) {
+            is EventsArrangement.LeftToRight,
+            is EventsArrangement.MixedDirections -> true
 
-            is Config.RightToLeft -> false
+            is EventsArrangement.RightToLeft -> false
         }
 
         slots.forEachIndexed { idx, slotIter ->
@@ -187,7 +193,7 @@ class DailyAgendaStateController(
                 println("DailyAgendaState: SlotInfoMap: ${it.key.title}, ${it.value}")
             }
 
-            if (config is Config.MixedDirections) {
+            if (config.eventsArrangement is EventsArrangement.MixedDirections) {
                 isLeftIter = !isLeftIter
             }
         }

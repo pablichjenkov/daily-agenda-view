@@ -8,7 +8,7 @@ import androidx.compose.ui.unit.max
  * Returns the Event Y axis offset in Dp from the slot start time.
  * */
 internal fun getEventTranslationInSlot(event: Event, config: Config): Dp {
-    val fractionOfSlots = (event.startTime - event.startSlot.time) * config.slotScale
+    val fractionOfSlots = (event.startValue - event.startSlot.value) * config.slotScale
     return (fractionOfSlots * config.slotHeight).dp
 }
 
@@ -16,7 +16,7 @@ internal fun getEventTranslationInSlot(event: Event, config: Config): Dp {
  * Returns the height in Dp for a given Event based on the amount of slots it touches.
  * */
 internal fun getEventHeight(event: Event, config: Config): Dp {
-    val numberOfSlots = (event.endTime - event.startTime) * config.slotScale
+    val numberOfSlots = (event.endValue - event.startValue) * config.slotScale
     return (numberOfSlots * config.slotHeight).dp
 }
 
@@ -54,7 +54,7 @@ internal fun getSlotsIncludeStartSlot(
     val containingSlots = mutableListOf<Slot>()
     eventSlots.forEach { slot ->
         println("LayoutUtil: Checking slot: ${slot.title}")
-        if (event.endTime > slot.time + 0.0001) {
+        if (event.endValue > slot.value + 0.0001) {
             println("LayoutUtil: slot: ${slot.title} contains event: ${event.title}")
             containingSlots.add(slot)
         }
@@ -73,7 +73,7 @@ internal fun getSlotsIgnoreStartSlot(
     val laterSlots = dailyAgendaState.slots.subList(slotIndex + 1, dailyAgendaState.slots.size)
     val containingSlots = mutableListOf<Slot>()
     laterSlots.forEach { slot ->
-        if (event.endTime > slot.time + 0.0001) {
+        if (event.endValue > slot.value + 0.0001) {
             println("LayoutUtil: slot: ${slot.title} contains event: ${event.title}")
             containingSlots.add(slot)
         }
@@ -114,7 +114,7 @@ internal fun updateEventOffsetX(
 }
 
 internal fun Event.isSingleSlot(): Boolean {
-    return endTime - startTime < 0.6
+    return endValue - startValue < 0.6
 }
 
 internal fun getEventWidthFromLeft(
@@ -189,9 +189,9 @@ private fun shouldReturnMinimumAllowedWidth(
     config: Config,
     event: Event
 ): Boolean {
-    when (val config = config) {
-        is Config.LeftToRight -> {
-            if (!config.lastEventFillRow) {
+    when (val eventsArrangement = config.eventsArrangement) {
+        is EventsArrangement.LeftToRight -> {
+            if (!eventsArrangement.lastEventFillRow) {
                 return true
             }
             if (!event.isSingleSlot()) {
@@ -200,17 +200,17 @@ private fun shouldReturnMinimumAllowedWidth(
             return false
         }
 
-        is Config.MixedDirections -> {
-            return when (config.eventWidthType) {
-                EventWidthType.MaxVariableSize -> false
-                EventWidthType.FixedSize -> true
-                EventWidthType.FixedSizeFillLastEvent -> !event.isSingleSlot()
+        is EventsArrangement.MixedDirections -> {
+            return when (eventsArrangement.eventWidthType) {
+                EventsArrangement.MixedDirections.EventWidthType.MaxVariableSize -> false
+                EventsArrangement.MixedDirections.EventWidthType.FixedSize -> true
+                EventsArrangement.MixedDirections.EventWidthType.FixedSizeFillLastEvent -> !event.isSingleSlot()
             }
 
         }
 
-        is Config.RightToLeft -> {
-            if (!config.lastEventFillRow) {
+        is EventsArrangement.RightToLeft -> {
+            if (!eventsArrangement.lastEventFillRow) {
                 return true
             }
             if (!event.isSingleSlot()) {

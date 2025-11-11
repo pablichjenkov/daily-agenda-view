@@ -14,11 +14,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.macaosoftware.ui.dailyagenda.DailyAgendaStateController
 import com.macaosoftware.ui.dailyagenda.DailyAgendaView
-import com.macaosoftware.ui.dailyagenda.DecimalSlotsGenerator
-import com.macaosoftware.ui.dailyagenda.TimeLineSlotsGenerator
-import com.macaosoftware.ui.data.DemoConfigurations
+import com.macaosoftware.ui.dailyagenda.DecimalSlotsController
+import com.macaosoftware.ui.dailyagenda.EventsArrangement
+import com.macaosoftware.ui.dailyagenda.SlotConfig
+import com.macaosoftware.ui.dailyagenda.TimeLineSlotsController
+import com.macaosoftware.ui.dailyagenda.toLocalTimeEvent
 import com.macaosoftware.ui.data.Sample0
 import com.macaosoftware.ui.data.Sample3
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -35,13 +38,14 @@ fun App() {
                     .padding(paddingValues = innerPadding)
             ) {
                 val stateController = remember {
-                    val slotsGenerator = TimeLineSlotsGenerator()
-                    val demoConfigurations = DemoConfigurations(slotsGenerator)
+                    val demoSlotConfiguration = SlotConfig()
+                    val slotsController =
+                        TimeLineSlotsController(slotConfig = demoSlotConfiguration)
 
                     DailyAgendaStateController(
-                        slotsGenerator = slotsGenerator,
-                        slotToEventMap = Sample3(slotsGenerator = slotsGenerator).slotToEventMap,
-                        config = demoConfigurations.demoConfigLTR
+                        slotsController = slotsController,
+                        slotToEventMap = Sample3(slotsController = slotsController).slotToEventMap,
+                        eventsArrangement = EventsArrangement.LeftToRight()
                     )
                 }
                 DailyAgendaView(
@@ -49,10 +53,14 @@ fun App() {
                 ) { event ->
                     Box(
                         modifier = Modifier.fillMaxSize()
-                            .padding(2.dp)
+                            .padding(all = 2.dp)
                             .background(color = generateRandomColor())
                     ) {
-                        Text(text = "${event.title}: ${event.startTime}-${event.endTime}")
+                        val localTimeEvent = event.toLocalTimeEvent()
+                        Text(
+                            text = "${event.title}: ${localTimeEvent.startTime}-${localTimeEvent.endTime}",
+                            fontSize = 12.sp
+                        )
                     }
                 }
             }
@@ -73,27 +81,29 @@ private fun generateRandomColor(): Color {
 @Composable
 fun CalendarViewPreview() {
     val stateController = remember {
-        val slotsGenerator = DecimalSlotsGenerator()
-        val demoConfigurations = DemoConfigurations(slotsGenerator)
+        val demoSlotConfiguration = SlotConfig()
+        val slotsGenerator = DecimalSlotsController(demoSlotConfiguration)
 
         DailyAgendaStateController(
-            slotsGenerator = slotsGenerator,
-            slotToEventMap = Sample0(slotsGenerator = slotsGenerator).slotToEventMap,
-            config = demoConfigurations.demoConfigLTR
+            slotsController = slotsGenerator,
+            slotToEventMap = Sample0(slotsController = slotsGenerator).slotToEventMap,
+            eventsArrangement = EventsArrangement.MixedDirections()
         )
     }
-    stateController.state.value?.let { dailyAgendaState ->
-        MaterialTheme {
-            Box(modifier = Modifier.size(600.dp, 1000.dp)) {
-                DailyAgendaView(
-                    dailyAgendaState = dailyAgendaState
-                ) { event ->
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                            .background(color = generateRandomColor())
-                    ) {
-                        Text(text = "${event.title}: ${event.startTime}-${event.endTime}")
-                    }
+    MaterialTheme {
+        Box(modifier = Modifier.size(600.dp, 1000.dp)) {
+            DailyAgendaView(
+                dailyAgendaState = stateController.state.value
+            ) { event ->
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                        .background(color = generateRandomColor())
+                ) {
+                    val localTimeEvent = event.toLocalTimeEvent()
+                    Text(
+                        text = "${event.title}: ${localTimeEvent.startTime}-${localTimeEvent.endTime}",
+                        fontSize = 12.sp
+                    )
                 }
             }
         }
