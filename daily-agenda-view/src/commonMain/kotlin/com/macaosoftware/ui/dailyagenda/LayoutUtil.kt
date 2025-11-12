@@ -7,8 +7,8 @@ import androidx.compose.ui.unit.max
 /**
  * Returns the Event Y axis offset in Dp from the slot start time.
  * */
-internal fun getEventTranslationInSlot(event: Event, config: Config): Dp {
-    val fractionOfSlots = (event.startValue - event.startSlot.value) * config.slotScale
+internal fun getEventTranslationInSlot(event: Event, eventSlot: Slot, config: Config): Dp {
+    val fractionOfSlots = (event.startValue - eventSlot.value) * config.slotScale
     return (fractionOfSlots * config.slotHeight).dp
 }
 
@@ -29,9 +29,10 @@ internal fun getEventHeight(event: Event, config: Config): Dp {
 // during composition.
 private fun getMaximumNumberOfSiblingsInContainingSlots(
     event: Event,
+    eventSlot: Slot,
     dailyAgendaState: DailyAgendaState
 ): Int {
-    val containingSlots = getSlotsIncludeStartSlot(event, dailyAgendaState.slots)
+    val containingSlots = getSlotsIncludeStartSlot(event, eventSlot, dailyAgendaState.slots)
     val maxNumberOfEvents = containingSlots.fold(initial = 1) { maxNumberOfEvents, slot ->
         val numberOfEvents = dailyAgendaState.slotInfoMap[slot]?.getTotalColumnSpans() ?: 0
         if (numberOfEvents > maxNumberOfEvents) {
@@ -47,9 +48,10 @@ private fun getMaximumNumberOfSiblingsInContainingSlots(
  * */
 internal fun getSlotsIncludeStartSlot(
     event: Event,
+    eventSlot: Slot,
     slots: List<Slot>
 ): List<Slot> {
-    val slotIndex = slots.indexOf(event.startSlot)
+    val slotIndex = slots.indexOf(eventSlot)
     val eventSlots = slots.subList(slotIndex, slots.size)
     val containingSlots = mutableListOf<Slot>()
     eventSlots.forEach { slot ->
@@ -65,9 +67,10 @@ internal fun getSlotsIncludeStartSlot(
  * */
 internal fun getSlotsIgnoreStartSlot(
     dailyAgendaState: DailyAgendaState,
-    event: Event
+    event: Event,
+    eventSlot: Slot
 ): List<Slot> {
-    val slotIndex = dailyAgendaState.slots.indexOf(event.startSlot)
+    val slotIndex = dailyAgendaState.slots.indexOf(eventSlot)
     val laterSlots = dailyAgendaState.slots.subList(slotIndex + 1, dailyAgendaState.slots.size)
     val containingSlots = mutableListOf<Slot>()
     laterSlots.forEach { slot ->
@@ -81,6 +84,7 @@ internal fun getSlotsIgnoreStartSlot(
 internal fun updateEventOffsetX(
     dailyAgendaState: DailyAgendaState,
     event: Event,
+    eventSlot: Slot,
     slotOffsetInfoMap: Map<Slot, OffsetInfo>,
     eventWidth: Dp,
     isLeft: Boolean
@@ -88,9 +92,10 @@ internal fun updateEventOffsetX(
 
     val eventSlops = getSlotsIgnoreStartSlot(
         dailyAgendaState = dailyAgendaState,
-        event = event
+        event = event,
+        eventSlot = eventSlot
     )
-    val currentSlotOffsetInfo = slotOffsetInfoMap[event.startSlot]!!
+    val currentSlotOffsetInfo = slotOffsetInfoMap[eventSlot]!!
 
     if (isLeft) {
         currentSlotOffsetInfo.leftAccumulated += eventWidth
@@ -117,6 +122,7 @@ internal fun Event.isSingleSlot(): Boolean {
 internal fun getEventWidthFromLeft(
     dailyAgendaState: DailyAgendaState,
     event: Event,
+    eventSlot: Slot,
     amountOfEventsInSameSlot: Int,
     currentEventIndex: Int,
     eventContainerWidth: Dp,
@@ -140,6 +146,7 @@ internal fun getEventWidthFromLeft(
     } else {
         val widthNumber = getMaximumNumberOfSiblingsInContainingSlots(
             event,
+            eventSlot,
             dailyAgendaState
         )
         (slotRemainingWidth / widthNumber)
@@ -151,6 +158,7 @@ internal fun getEventWidthFromLeft(
 internal fun getEventWidthFromRight(
     dailyAgendaState: DailyAgendaState,
     event: Event,
+    eventSlot: Slot,
     amountOfEventsInSameSlot: Int,
     currentEventIndex: Int,
     eventContainerWidth: Dp,
@@ -174,6 +182,7 @@ internal fun getEventWidthFromRight(
     } else {
         val widthNumber = getMaximumNumberOfSiblingsInContainingSlots(
             event,
+            eventSlot,
             dailyAgendaState
         )
         (slotRemainingWidth / widthNumber)

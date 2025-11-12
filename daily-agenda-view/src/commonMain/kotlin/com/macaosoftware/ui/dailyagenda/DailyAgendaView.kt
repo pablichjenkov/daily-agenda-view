@@ -121,11 +121,12 @@ private fun LeftThenRightLayout(
                     .wrapContentSize()
             ) {
                 entry.value.forEachIndexed { idx, event ->
-                    val eventTranslation = getEventTranslationInSlot(event, config)
+                    val eventTranslation = getEventTranslationInSlot(event, slot, config)
                     val eventHeight = getEventHeight(event, config)
                     val eventWidth = getEventWidthFromLeft(
                         dailyAgendaState = dailyAgendaState,
                         event = event,
+                        eventSlot = slot,
                         amountOfEventsInSameSlot = entry.value.size,
                         currentEventIndex = idx,
                         eventContainerWidth = eventContainerWidth,
@@ -136,6 +137,7 @@ private fun LeftThenRightLayout(
                     updateEventOffsetX(
                         dailyAgendaState = dailyAgendaState,
                         event = event,
+                        eventSlot = slot,
                         slotOffsetInfoMap = offsetInfoMap,
                         eventWidth = eventWidth,
                         isLeft = true
@@ -156,11 +158,12 @@ private fun LeftThenRightLayout(
                     .wrapContentSize(),
             ) {
                 entry.value.forEachIndexed { idx, event ->
-                    val eventTranslation = getEventTranslationInSlot(event, config)
+                    val eventTranslation = getEventTranslationInSlot(event, slot, config)
                     val eventHeight = getEventHeight(event, config)
                     val eventWidth = getEventWidthFromRight(
                         dailyAgendaState = dailyAgendaState,
                         event = event,
+                        eventSlot = slot,
                         amountOfEventsInSameSlot = entry.value.size,
                         currentEventIndex = idx,
                         eventContainerWidth = eventContainerWidth,
@@ -171,6 +174,7 @@ private fun LeftThenRightLayout(
                     updateEventOffsetX(
                         dailyAgendaState = dailyAgendaState,
                         event = event,
+                        eventSlot = slot,
                         slotOffsetInfoMap = offsetInfoMap,
                         eventWidth = eventWidth,
                         isLeft = false

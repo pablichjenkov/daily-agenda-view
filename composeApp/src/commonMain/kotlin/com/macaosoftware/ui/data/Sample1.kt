@@ -37,31 +37,26 @@ class Sample1(slotsController: SlotsController) {
     fun createEventsFor800AM(startSlot: Slot): List<Event> {
         return slotToEventMap[startSlot]!! + listOf(
             Event(
-                startSlot = startSlot,
                 title = "Ev 1",
                 startValue = 8.0F,
                 endValue = 10.0F
             ),
             Event(
-                startSlot = startSlot,
                 title = "Ev 2",
                 startValue = 8.0F,
                 endValue = 9.5F
             ),
             Event(
-                startSlot = startSlot,
                 title = "Ev 3",
                 startValue = 8.0F,
                 endValue = 9.0F
             ),
             Event(
-                startSlot = startSlot,
                 title = "Ev 4",
                 startValue = 8.0F,
                 endValue = 8.75F
             ),
             Event(
-                startSlot = startSlot,
                 title = "Ev 5",
                 startValue = 8.0F,
                 endValue = 8.25F
@@ -72,19 +67,16 @@ class Sample1(slotsController: SlotsController) {
     fun createEventsFor830AM(startSlot: Slot): List<Event> {
         return slotToEventMap[startSlot]!! + listOf(
             Event(
-                startSlot = startSlot,
                 title = "Evt 6",
                 startValue = 8.5F,
                 endValue = 11.0F
             ),
             Event(
-                startSlot = startSlot,
                 title = "Evt 7",
                 startValue = 8.5F,
                 endValue = 9.5F
             ),
             Event(
-                startSlot = startSlot,
                 title = "Evt 8",
                 startValue = 8.5F,
                 endValue = 9.0F
@@ -95,13 +87,11 @@ class Sample1(slotsController: SlotsController) {
     fun createEventsFor900AM(startSlot: Slot): List<Event> {
         return slotToEventMap[startSlot]!! + listOf(
             Event(
-                startSlot = startSlot,
                 title = "Evt 9",
                 startValue = 9.0F,
                 endValue = 10.0F
             ),
             Event(
-                startSlot = startSlot,
                 title = "Evt 10",
                 startValue = 9.0F,
                 endValue = 10.0F
@@ -112,25 +102,21 @@ class Sample1(slotsController: SlotsController) {
     fun createEventsFor930AM(startSlot: Slot): List<Event> {
         return slotToEventMap[startSlot]!! + listOf(
             Event(
-                startSlot = startSlot,
                 title = "Evt 11",
                 startValue = 9.5F,
                 endValue = 11.0F
             ),
             Event(
-                startSlot = startSlot,
                 title = "Evt 12",
                 startValue = 9.5F,
                 endValue = 10.5F
             ),
             Event(
-                startSlot = startSlot,
                 title = "Evt 13",
                 startValue = 9.5F,
                 endValue = 10.0F
             ),
             Event(
-                startSlot = startSlot,
                 title = "Evt 14",
                 startValue = 9.5F,
                 endValue = 10.0F
@@ -141,19 +127,16 @@ class Sample1(slotsController: SlotsController) {
     fun createEventsFor10_00AM(startSlot: Slot): List<Event> {
         return slotToEventMap[startSlot]!! + listOf(
             Event(
-                startSlot = startSlot,
                 title = "Evt 15",
                 startValue = 10.0F,
                 endValue = 11.5F
             ),
             Event(
-                startSlot = startSlot,
                 title = "Evt 16",
                 startValue = 10.0F,
                 endValue = 11.0F
             ),
             Event(
-                startSlot = startSlot,
                 title = "Evt 17",
                 startValue = 10.0F,
                 endValue = 10.5F
@@ -164,13 +147,11 @@ class Sample1(slotsController: SlotsController) {
     fun createEventsFor10_30AM(startSlot: Slot): List<Event> {
         return slotToEventMap[startSlot]!! + listOf(
             Event(
-                startSlot = startSlot,
                 title = "Evt 18",
                 startValue = 10.5F,
                 endValue = 11.5F
             ),
             Event(
-                startSlot = startSlot,
                 title = "Evt 19",
                 startValue = 10.5F,
                 endValue = 11.0F

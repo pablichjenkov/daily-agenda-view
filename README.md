@@ -55,7 +55,7 @@ sourceSets {
 <BR/>
 
 Lets create a helper class to build the initial events data.
-
+TODO: Remove bellow snippet is out dated, events should be created using the EventsManager class.
 ```kotlin
 class SampleDataBuilder(slotsGenerator: SlotsGenerator) {
   val slotToEventMap = mutableMapOf<Slot, List<Event>>() // A Map<Slot, List<Event>> is the data structure which DailyAgendaView will render.
@@ -78,26 +78,28 @@ Then add a **DailyAgendaView** in your Composable function like in the code snip
 @Composable
 fun Box(modifier = Modifier.fillMaxSize()) {
 
-  val dailyAgendaStateController = remember {
-    val slotsGenerator = TimeLineSlotsGenerator()
-    val demoConfigurations = DemoConfigurations(slotsGenerator)
-    val slotToEventMap = SampleDataBuilder(slotsGenerator = slotsGenerator).slotToEventMap // See Sample0 .. Sample3 classes in the composeApp module for more detail
+    val stateController = remember {
+        val slotConfig = SlotConfig(slotScale = 4, slotHeight = 32)
+        val slotsController = TimeLineSlotsController(slotConfig = slotConfig)
+        val eventsManager = EventsManager(slotsController = slotsController)
 
-    DailyAgendaStateController(
-        slotsGenerator = slotsGenerator,
-        slotToEventMap = slotToEventMap,
-        config = demoConfigurations.demoConfigMixedDirections
-    )
-  }
-    
-  DailyAgendaView(dailyAgendaState = dailyAgendaStateController.state.value) { event ->
+        // Prepare the initial data, Check this class EventsManager to see how create events
+        Sample0(eventsManager = eventsManager)
+
+        DailyAgendaStateController(
+            eventsManager = eventsManager,
+            eventsArrangement = EventsArrangement.LeftToRight()
+        )
+    }
+
+    DailyAgendaView(dailyAgendaState = dailyAgendaStateController.state.value) { event ->
         Box(
             modifier =
                 Modifier.fillMaxSize().padding(2.dp).background(color = Color.LightGray)
         ) {
-            Text(text = "${event.title}: ${event.startTime}-${event.endTime}") 
+            Text(text = "${event.title}: ${event.startTime}-${event.endTime}")
         }
-  }
+    }
     
 }
 ```

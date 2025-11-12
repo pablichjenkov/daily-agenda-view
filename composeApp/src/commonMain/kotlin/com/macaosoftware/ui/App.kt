@@ -19,6 +19,7 @@ import com.macaosoftware.ui.dailyagenda.DailyAgendaStateController
 import com.macaosoftware.ui.dailyagenda.DailyAgendaView
 import com.macaosoftware.ui.dailyagenda.DecimalSlotsController
 import com.macaosoftware.ui.dailyagenda.EventsArrangement
+import com.macaosoftware.ui.dailyagenda.EventsManager
 import com.macaosoftware.ui.dailyagenda.SlotConfig
 import com.macaosoftware.ui.dailyagenda.TimeLineSlotsController
 import com.macaosoftware.ui.dailyagenda.toLocalTimeEvent
@@ -38,12 +39,15 @@ fun App() {
                     .padding(paddingValues = innerPadding)
             ) {
                 val stateController = remember {
-                    val slotConfig = SlotConfig(slotScale = 1, slotHeight = 100)
+                    val slotConfig = SlotConfig(slotScale = 4, slotHeight = 32)
                     val slotsController = TimeLineSlotsController(slotConfig = slotConfig)
+                    val eventsManager = EventsManager(slotsController = slotsController)
+
+                    // Prepare the initial data
+                    Sample0(eventsManager = eventsManager)
 
                     DailyAgendaStateController(
-                        slotsController = slotsController,
-                        slotToEventMap = Sample0(slotsController = slotsController).slotToEventMap,
+                        eventsManager = eventsManager,
                         eventsArrangement = EventsArrangement.LeftToRight()
                     )
                 }
@@ -81,11 +85,14 @@ private fun generateRandomColor(): Color {
 fun CalendarViewPreview() {
     val stateController = remember {
         val demoSlotConfiguration = SlotConfig()
-        val slotsGenerator = DecimalSlotsController(demoSlotConfiguration)
+        val slotsController = DecimalSlotsController(demoSlotConfiguration)
+        val eventsManager = EventsManager(slotsController = slotsController)
+
+        // Prepare the initial data
+        Sample0(eventsManager = eventsManager)
 
         DailyAgendaStateController(
-            slotsController = slotsGenerator,
-            slotToEventMap = Sample0(slotsController = slotsGenerator).slotToEventMap,
+            eventsManager = eventsManager,
             eventsArrangement = EventsArrangement.MixedDirections()
         )
     }

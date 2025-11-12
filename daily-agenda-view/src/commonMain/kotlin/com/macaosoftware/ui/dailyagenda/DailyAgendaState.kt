@@ -28,7 +28,7 @@ data class SlotInfo internal constructor(
 }
 
 data class Event(
-    val startSlot: Slot,
+    // val startSlot: Slot,
     val title: String,
     val startValue: Float,
     val endValue: Float

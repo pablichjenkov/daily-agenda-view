@@ -7,7 +7,6 @@ private const val HOUR_PM = "PM"
 private const val MINUTES_IN_ONE_HOUR = 60
 
 data class LocalTimeEvent(
-    val startSlot: Slot,
     val title: String,
     val startTime: LocalTime,
     val endTime: LocalTime
@@ -22,7 +21,6 @@ fun Event.toLocalTimeEvent(): LocalTimeEvent {
     val startLocalTime = fromValueToLocalTime(value = startValue)
     val endLocalTime = fromValueToLocalTime(value = endValue)
     return LocalTimeEvent(
-        startSlot = startSlot,
         title = title,
         startTime = startLocalTime,
         endTime = endLocalTime
@@ -33,7 +31,6 @@ fun LocalTimeEvent.toEvent(): Event {
     val startTimeValue = fromLocalTimeToValue(localTime = startTime)
     val endTimeValue = fromLocalTimeToValue(localTime = endTime)
     return Event(
-        startSlot = startSlot,
         title = title,
         startValue = startTimeValue,
         endValue = endTimeValue
