@@ -38,18 +38,22 @@ fun App() {
                     .padding(paddingValues = innerPadding)
             ) {
                 val stateController = remember {
-                    val slotConfig = SlotConfig(slotScale = 1, slotHeight = 102)
-                    val timeSlotsStateController = TimeSlotsStateController(slotConfig = slotConfig)
+                    val timeSlotsStateController =
+                        TimeSlotsStateController(
+                            slotConfig = SlotConfig(slotScale = 1, slotHeight = 102),
+                            eventsArrangement = EventsArrangement.MixedDirections(EventWidthType.MaxVariableSize)
+                        )
 
                     // Prepare the initial data
                     Sample0(timeSlotsStateController = timeSlotsStateController)
+
                     timeSlotsStateController
                 }
 //                val stateController = remember {
-//                    val slotConfig = SlotConfig(slotScale = 2)
+
 //                    val decimalSlotsStateController =
 //                        DecimalSlotsStateController(
-//                            slotConfig = slotConfig,
+//                            slotConfig = SlotConfig(slotScale = 2),
 //                            eventsArrangement = EventsArrangement.MixedDirections(EventWidthType.MaxVariableSize)
 //                        )
 //
@@ -98,8 +102,10 @@ private fun generateRandomColor(): Color {
 @Composable
 fun CalendarViewPreview() {
     val stateController = remember {
-        val slotConfig = SlotConfig(slotScale = 1, slotHeight = 72)
-        val decimalSlotsStateController = DecimalSlotsStateController(slotConfig = slotConfig)
+        val decimalSlotsStateController =
+            DecimalSlotsStateController(
+                slotConfig = SlotConfig(slotScale = 1, slotHeight = 72)
+            )
 
         // Prepare the initial data
         Sample1(decimalSlotsStateController = decimalSlotsStateController)

@@ -14,18 +14,14 @@ open class DecimalSlotsDataUpdater(
     ): Boolean {
         val eventSlot = decimalSlotsStateController.getSlotForValue(startValue = startValue)
         val siblingEvents =
-            decimalSlotsStateController.slotToEventMapSorted[eventSlot]?.toMutableList()
-                ?: return false
+            decimalSlotsStateController.slotToEventMapSorted[eventSlot] ?: mutableListOf()
 
-        val index = siblingEvents.binarySearch(fromIndex = 0, toIndex = siblingEvents.lastIndex) {
-            val diff = it.endValue - endValue
-            when {
-                (diff > 0F) -> 1
-                (diff < 0F) -> -1
-                else -> 0
+        var insertionIndex = 0
+        for (idx in 0..siblingEvents.lastIndex) {
+            if (siblingEvents[idx].endValue < endValue) {
+                insertionIndex = idx; break
             }
         }
-        val insertionIndex = if (index < 0) -(index + 1) else index
         siblingEvents.add(
             insertionIndex,
             Event(
@@ -95,7 +91,8 @@ open class DecimalSlotsDataUpdater(
                 }
             }
             slotToEventMapSortedMerge.entries.forEach { entry ->
-                val eventsSortedByEndTime = entry.value.sortedWith(endTimeComparator).toMutableList()
+                val eventsSortedByEndTime =
+                    entry.value.sortedWith(endTimeComparator).toMutableList()
                 decimalSlotsStateController.slotToEventMapSorted.put(
                     entry.key,
                     eventsSortedByEndTime

@@ -55,45 +55,49 @@ sourceSets {
 
 <BR/>
 
-Lets create a helper class to build the initial events data.
-TODO: Remove bellow snippet is out dated, events should be created using the EventsManager class.
+The first thing you need is a StateController. You have to pick between DecimalSlotsStateController and
+TimeSlotsStateController. DecimalSlotsStateController for decimal value axiz and TimeSlotsStateController
+for hour and minute axis. See bellow
 ```kotlin
-class SampleDataBuilder(slotsGenerator: SlotsGenerator) {
-  val slotToEventMap = mutableMapOf<Slot, List<Event>>() // A Map<Slot, List<Event>> is the data structure which DailyAgendaView will render.
-  val slot8_00 = slotsGenerator.getSlotForTime(8.0F) // Get a slot for the specific time you want to add an event. In this case 8.00 AM
-
-  // This adds two event in the 8:00 AM slot
-  slotToEventMap[slot8_00] =  
-    listOf(
-        Event(startSlot = startSlot, title = "Ev 1", startTime = 8.0F, endTime = 12.0F),
-        Event(startSlot = startSlot, title = "Ev 2", startTime = 8.0F, endTime = 10.0F)
+val stateController = remember {
+    
+    val timeSlotsStateController = TimeSlotsStateController(
+        slotConfig = SlotConfig(slotScale = 4, slotHeight = 48),
+        eventsArrangement = EventsArrangement.MixedDirections(EventWidthType.FixedSizeFillLastEvent)
     )
+
+    // This add one single event
+    timeSlotsStateController.timeSlotsDataUpdater.addEvent(
+        startTime = LocalTime(hour = 8, minute = 0),
+        endTime = LocalTime(hour = 8, minute = 30),
+        title = "Event 0"
+    )
+    
+    // This add a list of events
+    timeSlotsStateController.timeSlotsDataUpdater.addEventList(
+        startTime = LocalTime(hour = 8, minute = 0), // This is the slot start time
+        events = createLocalTimeEventsFor800AM() // Pass a list of events here in the same slot
+    )
+    
+    // Commit all the changes at once. This operation will trigger a Compose state update.
+    timeSlotsStateController.timeSlotsDataUpdater.commit()
+    
+    timeSlotsStateController
 }
 ```
 
 <BR/>
 
-Then add a **DailyAgendaView** in your Composable function like in the code snippet bellow:
+Now that you create a SlotStateController and add some events to it. Then add a **DailyAgendaView** 
+in your Composable function:
 
 ```kotlin
 @Composable
 fun Box(modifier = Modifier.fillMaxSize()) {
 
-    val stateController = remember {
-        val slotConfig = SlotConfig(slotScale = 4, slotHeight = 32)
-        val slotsController = TimeLineSlotsController(slotConfig = slotConfig)
-        val eventsManager = EventsManager(slotsController = slotsController)
-
-        // Prepare the initial data, Check this class EventsManager to see how create events
-        Sample0(eventsManager = eventsManager)
-
-        DailyAgendaStateController(
-            eventsManager = eventsManager,
-            eventsArrangement = EventsArrangement.LeftToRight()
-        )
-    }
-
-    DailyAgendaView(dailyAgendaState = dailyAgendaStateController.state.value) { event ->
+    val stateController = remember { ... }
+    
+    DailyAgendaView(dailyAgendaState = stateController.state.value) { event ->
         Box(
             modifier =
                 Modifier.fillMaxSize().padding(2.dp).background(color = Color.LightGray)
@@ -110,7 +114,7 @@ Above code is all you need to have a daily events timeline added to your App. Be
 **1.** The default configuration if you don't specify any. In this mode the agenda view will try to maximize the events witdh. It achieves that by mixing the rows layout direction. **Even rows** are rendered from left to right while **odd rows** are rendered from right to left. Since the events are order by duration, this mode leverage the maximum space available by laying out in the opposite direction from the previous road. It should be very effective in most data use cases.
 
 ```kotlin
-config = Config.MixedDirections(eventWidthType = EventWidthType.VariableSize)
+eventsArrangement = EventsArrangement.MixedDirections(eventWidthType = EventWidthType.VariableSize)
 ```
 
 <img width="300" alt="daily-agenda-mix-directions-variable-width" src="https://github.com/user-attachments/assets/a914051f-0da5-4bcf-9519-037bebae4cb5" />
@@ -120,7 +124,7 @@ config = Config.MixedDirections(eventWidthType = EventWidthType.VariableSize)
 **2.** Similar to above, this mode also mixes the direction of the layout, even rows do LTR and odd rows fo RTL. But in this mode all the events have the same with. This is for the case where maximum space wants to be coverred but at the same time esthetic is needed.
 
 ```kotlin
-config = Config.MixedDirections(eventWidthType = EventWidthType.FixedSize)
+eventsArrangement = EventsArrangement.MixedDirections(eventWidthType = EventWidthType.FixedSize)
 ```
 
 <img width="300" alt="daily-agenda-mix-directions-same-width" src="https://github.com/user-attachments/assets/f8b432fa-03b1-4764-852b-31de5e852dd1" />
@@ -130,7 +134,7 @@ config = Config.MixedDirections(eventWidthType = EventWidthType.FixedSize)
 **3.** This mode is just like number 2 but expand the single slot events to occupy the full row available width.
 
 ```kotlin
-config = Config.MixedDirections(eventWidthType = EventWidthType.FixedSizeFillLastEvent)
+eventsArrangement = EventsArrangement.MixedDirections(eventWidthType = EventWidthType.FixedSizeFillLastEvent)
 ```
 
 <table>
@@ -156,7 +160,7 @@ config = Config.MixedDirections(eventWidthType = EventWidthType.FixedSizeFillLas
 **4.** Instead of maximizing space consumption, an App might want consistency laying out the daily calendar events. Bellow mode renders from left to right always and also expand the single slot events to occupy the full row available width.
 
 ```kotlin
-config = Config.LeftToRight(lastEventFillRow = true)
+eventsArrangement = EventsArrangement.LeftToRight(lastEventFillRow = true)
 ```
 
 <img width="300" alt="daily-agenda-LTR-fill-end" src="https://github.com/user-attachments/assets/a67d206c-c92f-4eee-b0b6-64ce4fcaa823" />
@@ -166,7 +170,7 @@ config = Config.LeftToRight(lastEventFillRow = true)
 **5.** Similar to number 4 but in this case we want all the events to have the same width.
 
 ```kotlin
-config = Config.LeftToRight(lastEventFillRow = false)
+eventsArrangement = EventsArrangement.LeftToRight(lastEventFillRow = false)
 ```
 
 <img width="300" alt="daily-agenda-LTR-no-fill-end" src="https://github.com/user-attachments/assets/a4595b2e-9b29-4bbd-8a4d-6b8c3688163d" />
@@ -176,7 +180,7 @@ config = Config.LeftToRight(lastEventFillRow = false)
 **6.** The same as number 4 but from Right to left. Could be useful in countries where languages are written/read from right to left.
 
 ```kotlin
-config = Config.RightToLeft(lastEventFillRow = true)
+eventsArrangement = EventsArrangement.RightToLeft(lastEventFillRow = true)
 ```
 
 <img width="300" alt="daily-agenda-RTL-fill-end" src="https://github.com/user-attachments/assets/aef40594-2ba2-4c00-b93c-8f9eec8b30d2" />
@@ -186,7 +190,7 @@ config = Config.RightToLeft(lastEventFillRow = true)
 **7.** The same as number 5 but from Right to left.
 
 ```kotlin
-config = Config.RightToLeft(lastEventFillRow = false)
+eventsArrangement = EventsArrangement.RightToLeft(lastEventFillRow = false)
 ```
 
 <img width="300" alt="daily-agenda-RTL-no-fill-end" src="https://github.com/user-attachments/assets/9994e98d-6d2d-4168-b2b4-59ac45e5210e" />

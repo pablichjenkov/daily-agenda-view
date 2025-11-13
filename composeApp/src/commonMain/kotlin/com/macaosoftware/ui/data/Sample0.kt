@@ -8,6 +8,11 @@ class Sample0(timeSlotsStateController: TimeSlotsStateController) {
 
     init {
         with(receiver = timeSlotsStateController.timeSlotsDataUpdater) {
+            addEvent(
+                startTime = LocalTime(hour = 8, minute = 0),
+                endTime = LocalTime(hour = 8, minute = 30),
+                title = "S_EV 0"
+            )
             addEventList(
                 startTime = LocalTime(hour = 8, minute = 0),
                 events = createLocalTimeEventsFor800AM()
@@ -23,6 +28,11 @@ class Sample0(timeSlotsStateController: TimeSlotsStateController) {
             addEventList(
                 startTime = LocalTime(hour = 9, minute = 30),
                 events = createLocalTimeEventsFor930AM()
+            )
+            addEvent(
+                startTime = LocalTime(hour = 8, minute = 0),
+                endTime = LocalTime(hour = 9, minute = 0),
+                title = "S_EV 1"
             )
 
             // Flush all the changes
