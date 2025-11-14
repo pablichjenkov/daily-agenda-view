@@ -53,7 +53,7 @@ sourceSets {
 }
 ```
 
-In Android specific projects that use java time or joda time it is necessary to include the kotlinx-datetime dependecy too. So gradle will look like bellow.
+In Android only projects which already use **java-time** or **joda-time**, it is necessary to include the **kotlinx-datetime** dependecy too. So gradle will look like bellow.
 
 ```kotlin
 dependencies {
