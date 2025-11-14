@@ -59,30 +59,22 @@ The first thing you need is a StateController. You have to pick between DecimalS
 TimeSlotsStateController. DecimalSlotsStateController for decimal value axiz and TimeSlotsStateController
 for hour and minute axis. See bellow
 ```kotlin
-val stateController = remember {
-    
-    val timeSlotsStateController = TimeSlotsStateController(
-        slotConfig = SlotConfig(slotScale = 4, slotHeight = 48),
+val timeSlotsStateController = remember {
+    TimeSlotsStateController(
+        timeSlotConfig = TimeSlotConfig(slotScale = 2, slotHeight = 48),
         eventsArrangement = EventsArrangement.MixedDirections(EventWidthType.FixedSizeFillLastEvent)
-    )
-
-    // This add one single event
-    timeSlotsStateController.timeSlotsDataUpdater.addEvent(
-        startTime = LocalTime(hour = 8, minute = 0),
-        endTime = LocalTime(hour = 8, minute = 30),
-        title = "Event 0"
-    )
-    
-    // This add a list of events
-    timeSlotsStateController.timeSlotsDataUpdater.addEventList(
-        startTime = LocalTime(hour = 8, minute = 0), // This is the slot start time
-        events = createLocalTimeEventsFor800AM() // Pass a list of events here in the same slot
-    )
-    
-    // Commit all the changes at once. This operation will trigger a Compose state update.
-    timeSlotsStateController.timeSlotsDataUpdater.commit()
-    
-    timeSlotsStateController
+    ).apply {
+        timeSlotsDataUpdater.addEvent(
+            startTime = LocalTime(hour = 8, minute = 0),
+            endTime = LocalTime(hour = 8, minute = 30),
+            title = "Event 0"
+        )
+        timeSlotsDataUpdater.addEventList(
+            startTime = LocalTime(hour = 8, minute = 0), // This is the slot start time
+            events = createLocalTimeEventsFor800AM() // Pass a list of events here in the same slot
+        )
+        timeSlotsDataUpdater.commit()
+    }
 }
 ```
 
@@ -95,17 +87,20 @@ in your Composable function:
 @Composable
 fun Box(modifier = Modifier.fillMaxSize()) {
 
-    val stateController = remember { ... }
-    
-    DailyAgendaView(dailyAgendaState = stateController.state.value) { event ->
+    val timeSlotsStateController = remember { ... }
+
+    TimeSlotsView(timeSlotsStateController = timeSlotsStateController) { localTimeEvent ->
         Box(
-            modifier =
-                Modifier.fillMaxSize().padding(2.dp).background(color = Color.LightGray)
+            modifier = Modifier.fillMaxSize()
+                .padding(all = 2.dp)
+                .background(color = generateRandomColor())
         ) {
-            Text(text = "${event.title}: ${event.startTime}-${event.endTime}")
+            Text(
+                text = "${localTimeEvent.title}: ${localTimeEvent.startTime}-${localTimeEvent.endTime}",
+                fontSize = 12.sp
+            )
         }
     }
-    
 }
 ```
 
