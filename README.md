@@ -103,7 +103,7 @@ val timeSlotsStateController = remember {
 
 <BR/>
 
-Now that you create a **SlotStateController** and add some events to it. Then add a **DailyAgendaView** 
+Now that you create a **SlotStateController** and add some events to it. Then add a **TimeSlotsView** 
 in your Composable function:
 
 ```kotlin
