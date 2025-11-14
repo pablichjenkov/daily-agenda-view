@@ -64,8 +64,8 @@ dependencies {
 
 <BR/>
 
-The first thing you need is a StateController. You have to pick between DecimalSlotsStateController and
-TimeSlotsStateController. DecimalSlotsStateController for decimal value axiz and TimeSlotsStateController
+The first thing you need is a **StateController**. You have to pick between **DecimalSlotsStateController** and
+**TimeSlotsStateController**. **DecimalSlotsStateController** for decimal value axiz and **TimeSlotsStateController**
 for hour and minute axis. See bellow
 ```kotlin
 val timeSlotsStateController = remember {
@@ -104,7 +104,7 @@ val timeSlotsStateController = remember {
 
 <BR/>
 
-Now that you create a SlotStateController and add some events to it. Then add a **DailyAgendaView** 
+Now that you create a **SlotStateController** and add some events to it. Then add a **DailyAgendaView** 
 in your Composable function:
 
 ```kotlin
