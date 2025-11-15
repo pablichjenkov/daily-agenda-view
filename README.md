@@ -124,7 +124,9 @@ fun MySchedule(modifier = Modifier.fillMaxSize()) {
 }
 ```
 
-Above code is all you need to have a daily events timeline added to your App. Bellow is a showcase of the different layout configurations the component offers. 
+<img width="500" alt="desktop-demo" src="https://github.com/user-attachments/assets/440559b3-73f5-4a27-8594-8cb1350356c4" />
+
+## Events Arrangement Options
 
 **1.** In this mode the agenda view will try to maximize the events witdh. It achieves that by mixing the rows layout direction. **Even rows** are rendered from left to right while **odd rows** are rendered from right to left. Since the events are order by duration, this mode leverage the maximum space available by laying out in the opposite direction from the previous road. It should be very effective in most data use cases.
 
