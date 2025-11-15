@@ -9,9 +9,9 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
-data class  CurrentTimeMarkerState(val offsetY: Dp)
+data class CurrentTimeMarkerState(val offsetY: Dp)
 
-internal  class CurrentTimeMarkerStateController(
+internal class CurrentTimeMarkerStateController(
     val dailyAgendaState: DailyAgendaState
 ) {
 
@@ -21,12 +21,11 @@ internal  class CurrentTimeMarkerStateController(
     init {
         val localTime = getCurrentLocalTime()
         val currentTimeAsDecimal = fromLocalTimeToValue(localTime)
-        val hourOffsetY = (currentTimeAsDecimal - config.initialSlotValue) * (config.slotScale * config.slotHeight)
+        val offsetY =
+            (currentTimeAsDecimal - config.initialSlotValue) * (config.slotScale * config.slotHeight)
 
-        val minuteRatio: Float = localTime.minute.toFloat() / 60
-        val minutesOffsetY = minuteRatio * (2 * config.slotHeight)
 
-        state.value = CurrentTimeMarkerState(offsetY = (hourOffsetY + minutesOffsetY).dp)
+        state.value = CurrentTimeMarkerState(offsetY = offsetY.dp)
     }
 
     @OptIn(ExperimentalTime::class)
