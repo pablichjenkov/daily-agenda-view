@@ -15,14 +15,16 @@ internal  class CurrentTimeMarkerStateController(
     val dailyAgendaState: DailyAgendaState
 ) {
 
+    val config = dailyAgendaState.config
     val state = mutableStateOf(value = CurrentTimeMarkerState(offsetY = 0.dp))
 
     init {
         val localTime = getCurrentLocalTime()
-        val hourOffsetY = (localTime.hour - dailyAgendaState.config.initialSlotValue) * (2 * dailyAgendaState.config.slotHeight)
+        val currentTimeAsDecimal = fromLocalTimeToValue(localTime)
+        val hourOffsetY = (currentTimeAsDecimal - config.initialSlotValue) * (config.slotScale * config.slotHeight)
 
         val minuteRatio: Float = localTime.minute.toFloat() / 60
-        val minutesOffsetY = minuteRatio * (2 * dailyAgendaState.config.slotHeight)
+        val minutesOffsetY = minuteRatio * (2 * config.slotHeight)
 
         state.value = CurrentTimeMarkerState(offsetY = (hourOffsetY + minutesOffsetY).dp)
     }
