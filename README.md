@@ -26,6 +26,7 @@ Live demo using kotlin-wasm: [Daily Agenda View](https://pablichjenkov.github.io
 
 | Agenda Version | Kotlin Version | CMP Version |
 |---------------|--------|-------|
+| 1.5.0 | 2.2.21 | 1.9.3 |
 | 1.4.0 | 2.2.21 | 1.9.3 |
 
   </td>
@@ -360,7 +361,9 @@ fun MyTvScheduleView(modifier = Modifier.fillMaxSize()) {
 }
 ```
 
-<img width="400" alt="epg-view" src="https://github.com/user-attachments/assets/dc5d6df5-f3ae-4477-bf8c-844ddfb4762c" />
+<img width="400" alt="epg-view-2" src="https://github.com/user-attachments/assets/cf4076c2-b0c2-4684-a915-82a067e5650b" />
+
+
 
 ## Contributions
 
