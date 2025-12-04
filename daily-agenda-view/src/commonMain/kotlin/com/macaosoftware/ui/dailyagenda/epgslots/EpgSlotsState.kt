@@ -10,7 +10,8 @@ import kotlinx.datetime.LocalTime
 data class EpgSlotsState(
     val slots: List<Slot>,
     val epgChannels: List<EpgChannel>,
-    val epgChannelSlotConfig: EpgChannelSlotConfig
+    val epgChannelSlotConfig: EpgChannelSlotConfig,
+    val epgChannelHeight: Float
 )
 
 data class EpgChannel(

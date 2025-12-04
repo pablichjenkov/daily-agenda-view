@@ -19,21 +19,22 @@ import kotlinx.datetime.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalendarEventActionsInputForm(
-    calendarEventOperationsState: CalendarEventOperationsState,
-    uiActionListener: DayScheduleAppViewModel.UiActionListener
+internal fun DayScheduleAppBottomSheet(
+    bottomSheetEventsState: BottomSheetEventsState,
+    uiActionListener: DayScheduleAppViewModel.UiActionListener,
+    alertDialogUiActionListener: DayScheduleAppViewModel.AlertDialogUiActionListener
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
-    when (calendarEventOperationsState) {
+    when (bottomSheetEventsState) {
 
-        CalendarEventOperationsState.Hidden -> {
+        BottomSheetEventsState.Hidden -> {
             // no-op
         }
 
-        is CalendarEventOperationsState.ShowTimedEventRequested -> {
-            val timeEvent = calendarEventOperationsState.localTimeEvent
+        is BottomSheetEventsState.ShowTimedEventRequested -> {
+            val timeEvent = bottomSheetEventsState.localTimeEvent
             ModalBottomSheet(
                 onDismissRequest = { uiActionListener.dismissInputForm() },
                 sheetState = sheetState
@@ -112,7 +113,7 @@ fun CalendarEventActionsInputForm(
             }
         }
 
-        CalendarEventOperationsState.AddTimedEventRequested -> {
+        BottomSheetEventsState.AddTimedEventRequested -> {
             ModalBottomSheet(
                 onDismissRequest = { uiActionListener.dismissInputForm() },
                 sheetState = sheetState
@@ -174,6 +175,10 @@ fun CalendarEventActionsInputForm(
                                     )
                                 } catch (ex: Exception) {
                                     ex.printStackTrace()
+                                    uiActionListener.dismissInputForm()
+                                    alertDialogUiActionListener.showAlert(
+                                        text = "Exception entering field: ${ex.message}"
+                                    )
                                 }
                             }
                         }) {
@@ -191,8 +196,8 @@ fun CalendarEventActionsInputForm(
             }
         }
 
-        is CalendarEventOperationsState.RemoveTimedEventRequested -> {
-            val eventTitleInitialValue = calendarEventOperationsState.localTimeEvent.title
+        is BottomSheetEventsState.RemoveTimedEventRequested -> {
+            val eventTitleInitialValue = bottomSheetEventsState.localTimeEvent.title
             ModalBottomSheet(
                 onDismissRequest = { uiActionListener.dismissInputForm() },
                 sheetState = sheetState
@@ -225,8 +230,8 @@ fun CalendarEventActionsInputForm(
             }
         }
 
-        is CalendarEventOperationsState.ShowDecimalEventRequested -> {
-            val decimalEvent = calendarEventOperationsState.decimalEvent
+        is BottomSheetEventsState.ShowDecimalEventRequested -> {
+            val decimalEvent = bottomSheetEventsState.decimalEvent
             ModalBottomSheet(
                 onDismissRequest = { uiActionListener.dismissInputForm() },
                 sheetState = sheetState
@@ -289,7 +294,7 @@ fun CalendarEventActionsInputForm(
             }
         }
 
-        CalendarEventOperationsState.AddDecimalEventRequested -> {
+        BottomSheetEventsState.AddDecimalEventRequested -> {
             ModalBottomSheet(
                 onDismissRequest = { uiActionListener.dismissInputForm() },
                 sheetState = sheetState
@@ -327,6 +332,10 @@ fun CalendarEventActionsInputForm(
                                     )
                                 } catch (ex: Exception) {
                                     ex.printStackTrace()
+                                    uiActionListener.dismissInputForm()
+                                    alertDialogUiActionListener.showAlert(
+                                        text = "Exception entering field: ${ex.message}"
+                                    )
                                 }
                             }
                         }) {
@@ -344,8 +353,8 @@ fun CalendarEventActionsInputForm(
             }
         }
 
-        is CalendarEventOperationsState.RemoveDecimalEventRequested -> {
-            val eventTitleInitialValue = calendarEventOperationsState.decimalEvent.title
+        is BottomSheetEventsState.RemoveDecimalEventRequested -> {
+            val eventTitleInitialValue = bottomSheetEventsState.decimalEvent.title
             ModalBottomSheet(
                 onDismissRequest = { uiActionListener.dismissInputForm() },
                 sheetState = sheetState
@@ -379,8 +388,8 @@ fun CalendarEventActionsInputForm(
             }
         }
 
-        is CalendarEventOperationsState.ShowEpgEventRequested -> {
-            val timeEvent = calendarEventOperationsState.epgEvent
+        is BottomSheetEventsState.ShowEpgEventRequested -> {
+            val timeEvent = bottomSheetEventsState.epgEvent
             ModalBottomSheet(
                 onDismissRequest = { uiActionListener.dismissInputForm() },
                 sheetState = sheetState
@@ -459,7 +468,7 @@ fun CalendarEventActionsInputForm(
             }
         }
 
-        CalendarEventOperationsState.AddEpgEventRequested -> {
+        BottomSheetEventsState.AddEpgEventRequested -> {
             ModalBottomSheet(
                 onDismissRequest = { uiActionListener.dismissInputForm() },
                 sheetState = sheetState
@@ -521,6 +530,10 @@ fun CalendarEventActionsInputForm(
                                     )
                                 } catch (ex: Exception) {
                                     ex.printStackTrace()
+                                    uiActionListener.dismissInputForm()
+                                    alertDialogUiActionListener.showAlert(
+                                        text = "Exception entering field: ${ex.message}"
+                                    )
                                 }
                             }
                         }) {
@@ -538,8 +551,8 @@ fun CalendarEventActionsInputForm(
             }
         }
 
-        is CalendarEventOperationsState.RemoveEpgEventRequested -> {
-            val eventTitleInitialValue = calendarEventOperationsState.epgEvent.title
+        is BottomSheetEventsState.RemoveEpgEventRequested -> {
+            val eventTitleInitialValue = bottomSheetEventsState.epgEvent.title
             ModalBottomSheet(
                 onDismissRequest = { uiActionListener.dismissInputForm() },
                 sheetState = sheetState

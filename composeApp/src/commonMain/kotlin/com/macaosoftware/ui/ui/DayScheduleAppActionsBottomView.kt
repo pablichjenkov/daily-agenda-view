@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BoxScope.CalendarEventActionsView(
+internal fun BoxScope.DayScheduleAppActionsBottomView(
     slotsViewType: SlotsViewType,
     uiActionListener: DayScheduleAppViewModel.UiActionListener
 ) {

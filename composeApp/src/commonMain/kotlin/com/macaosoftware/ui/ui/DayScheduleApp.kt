@@ -23,15 +23,20 @@ import com.macaosoftware.ui.dailyagenda.decimalslots.DecimalSlotsStateController
 import com.macaosoftware.ui.dailyagenda.decimalslots.DecimalSlotsView
 import com.macaosoftware.ui.dailyagenda.decimalslots.EventWidthType
 import com.macaosoftware.ui.dailyagenda.decimalslots.EventsArrangement
+import com.macaosoftware.ui.dailyagenda.epgslots.EpgChannelSlotConfig
 import com.macaosoftware.ui.dailyagenda.epgslots.EpgSlotsStateController
 import com.macaosoftware.ui.dailyagenda.epgslots.EpgSlotsView
+import com.macaosoftware.ui.dailyagenda.timeslots.TimeSlotConfig
 import com.macaosoftware.ui.dailyagenda.timeslots.TimeSlotsStateController
 import com.macaosoftware.ui.dailyagenda.timeslots.TimeSlotsView
 import com.macaosoftware.ui.data.DecimalSlotsDataSample
+import com.macaosoftware.ui.data.EpgSlotsDataSample
 import com.macaosoftware.ui.ui.model.AllDayEvent
+import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.random.Random
 import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @Composable
 @Preview
@@ -67,19 +72,25 @@ fun DayScheduleApp() {
                         )
                     }
                 }
-                CalendarEventActionsView(
+                DayScheduleAppActionsBottomView(
                     slotsViewType = viewModel.slotsViewType,
                     uiActionListener = viewModel.uiActionListener
                 )
-                CalendarEventActionsInputForm(
-                    calendarEventOperationsState = viewModel.calendarEventOperationsState.value,
-                    uiActionListener = viewModel.uiActionListener
+                DayScheduleAppBottomSheet(
+                    bottomSheetEventsState = viewModel.bottomSheetEventsState.value,
+                    uiActionListener = viewModel.uiActionListener,
+                    alertDialogUiActionListener = viewModel.alertDialogUiActionListener
+                )
+                DayScheduleAppAlertDialog(
+                    alertDialogEventsState = viewModel.alertDialogEventsState.value,
+                    alertDialogUiActionListener = viewModel.alertDialogUiActionListener
                 )
             }
         }
     }
 }
 
+@OptIn(ExperimentalUuidApi::class)
 @Composable
 private fun TimeSlotExample(
     allDayEvents: List<AllDayEvent>,
@@ -100,8 +111,8 @@ private fun TimeSlotExample(
         ) { localTimeEvent ->
             Box(
                 modifier = Modifier.fillMaxSize()
-                    .padding(all = 2.dp)
-                    .background(color = generateRandomColor())
+                    .padding(all = 1.dp)
+                    .background(color = generateRandomColor(localTimeEvent.uuid))
                     .combinedClickable(
                         onClick = {
                             uiActionListener.onTimeEventClicked(localTimeEvent)
@@ -123,6 +134,7 @@ private fun TimeSlotExample(
     }
 }
 
+@OptIn(ExperimentalUuidApi::class)
 @Composable
 private fun DecimalSlotExample(
     decimalSlotsStateController: DecimalSlotsStateController,
@@ -134,8 +146,8 @@ private fun DecimalSlotExample(
         ) { decimalEvent ->
             Box(
                 modifier = Modifier.fillMaxSize()
-                    .padding(all = 2.dp)
-                    .background(color = generateRandomColor())
+                    .padding(all = 1.dp)
+                    .background(color = generateRandomColor(decimalEvent.uuid))
                     .combinedClickable(
                         onClick = {
                             uiActionListener.onDecimalEventClicked(decimalEvent)
@@ -168,8 +180,8 @@ private fun EpgSlotExample(
         epgSlotsStateController = epgSlotsStateController
     ) { localTimeEvent ->
         Box(
-            modifier = Modifier.fillMaxSize().padding(2.dp)
-                .background(generateRandomColor())
+            modifier = Modifier.fillMaxSize().padding(1.dp)
+                .background(generateRandomColor(localTimeEvent.uuid))
                 .combinedClickable(
                     onClick = {
                         uiActionListener.onEpgEventClicked(localTimeEvent)
@@ -190,18 +202,24 @@ private fun EpgSlotExample(
     }
 }
 
-private fun generateRandomColor(): Color {
+@OptIn(ExperimentalUuidApi::class)
+private val colorPerEventMap = mutableMapOf<Uuid, Color>()
+
+@OptIn(ExperimentalUuidApi::class)
+private fun generateRandomColor(uuid: Uuid): Color {
+    colorPerEventMap[uuid]?.let { return it }
     val red = Random.nextInt(256)
     val green = Random.nextInt(256)
     val blue = Random.nextInt(256)
-    return Color(red, green, blue)
+    return Color(red, green, blue).also { colorPerEventMap[uuid] = it }
 }
 
 @Preview(
     showBackground = true
 )
+@OptIn(ExperimentalUuidApi::class)
 @Composable
-fun CalendarViewPreview() {
+fun DecimalSlotsViewPreview() {
     val decimalSlotsStateController = remember {
         DecimalSlotsStateController(
             decimalSlotConfig = DecimalSlotConfig(slotScale = 2),
@@ -216,11 +234,47 @@ fun CalendarViewPreview() {
             DecimalSlotsView(decimalSlotsStateController = decimalSlotsStateController) { event ->
                 Box(
                     modifier = Modifier.fillMaxSize()
-                        .padding(all = 2.dp)
-                        .background(color = generateRandomColor())
+                        .padding(all = 1.dp)
+                        .background(color = generateRandomColor(event.uuid))
                 ) {
                     Text(
                         text = "${event.title}: ${event.startValue}-${event.endValue}",
+                        fontSize = 12.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalUuidApi::class)
+@Preview(
+    showBackground = true
+)
+@Composable
+fun EpgSlotsViewPreview() {
+    val epgSlotsStateController = remember {
+        EpgSlotsStateController(
+            EpgChannelSlotConfig(
+                timeSlotConfig = TimeSlotConfig(
+                    startSlotTime = LocalTime(6, 0),
+                    endSlotTime = LocalTime(23, 59)
+                )
+            )
+        ).apply {
+            EpgSlotsDataSample(epgSlotsStateController = this)
+        }
+    }
+    MaterialTheme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            EpgSlotsView(epgSlotsStateController = epgSlotsStateController) { localEvent ->
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                        .padding(all = 1.dp)
+                        .background(color = generateRandomColor(localEvent.uuid))
+                ) {
+                    Text(
+                        text = "${localEvent.title}: ${localEvent.startTime}-${localEvent.endTime}",
                         fontSize = 12.sp
                     )
                 }

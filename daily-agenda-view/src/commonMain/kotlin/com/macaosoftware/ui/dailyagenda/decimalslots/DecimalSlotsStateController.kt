@@ -10,12 +10,12 @@ open class DecimalSlotsStateController(
     val slotUnit = 1.0F / slotScale
     val firstSlotIndex = (slotScale * decimalSlotConfig.initialSlotValue.toInt())
 
-    private val amountOfSlotsInOneDay = decimalSlotConfig.lastSlotValue.toInt() * slotScale
+    private val lastSlotIndex = decimalSlotConfig.lastSlotValue.toInt() * slotScale
 
 
     internal val decimalSlotsBaseLayoutStateController = DecimalSlotsBaseLayoutStateController(
         decimalSlotConfig = decimalSlotConfig,
-        slots = createSlots(firstSlotIndex, amountOfSlotsInOneDay),
+        slots = createSlots(firstSlotIndex, lastSlotIndex),
         eventsArrangement = eventsArrangement
     )
 
@@ -23,10 +23,10 @@ open class DecimalSlotsStateController(
 
     fun createSlots(
         firstSlotIndex: Int,
-        amountOfSlotsInOneDay: Int
+        lastSlotIndex: Int
     ): List<Slot> {
         val slots = mutableListOf<Slot>()
-        for (i in firstSlotIndex..amountOfSlotsInOneDay) {
+        for (i in firstSlotIndex..lastSlotIndex) {
             val slotStartValue = i * slotUnit
             slots.add(
                 Slot(

@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,27 +22,26 @@ import com.macaosoftware.ui.dailyagenda.timeslots.fromLocalTimeToValue
 import com.macaosoftware.ui.dailyagenda.timeslots.toSlotConfig
 
 @Composable
-internal fun ChannelSlotsLayout(
+internal fun EpgSlotsLayout(
     epgSlotsState: EpgSlotsState,
     eventContentProvider: @Composable (localTimeEvent: LocalTimeEvent) -> Unit
 ) {
     val timelineLeftPadding = epgSlotsState.epgChannelSlotConfig.timeSlotConfig.timelineLeftPadding
     val channelWidth = epgSlotsState.epgChannelSlotConfig.channelWidth
     val topHeaderHeight = epgSlotsState.epgChannelSlotConfig.topHeaderHeight
-    Row(modifier = Modifier.padding(start = timelineLeftPadding.dp).fillMaxSize()) {
+    val totalHeight = epgSlotsState.epgChannelHeight
+    Row(
+        modifier = Modifier.height(height = totalHeight.dp)
+            .padding(start = timelineLeftPadding.dp)
+    ) {
         epgSlotsState.epgChannels.forEach { channel ->
             Column(
-                modifier = Modifier.width(width = channelWidth.dp).fillMaxHeight()
+                modifier = Modifier.width(width = channelWidth.dp)
+                    .padding(all = 1.dp).background(color = Color.Gray.copy(alpha = 0.5f))
             ) {
-                Box(
+                Spacer(
                     Modifier.height(height = topHeaderHeight.dp).fillMaxWidth()
-                        .padding(all = 2.dp).background(color = Color.LightGray)
-                ) {
-                    Text(
-                        modifier = Modifier.align(Alignment.Center),
-                        text = channel.name
-                    )
-                }
+                )
                 ChannelColumn(
                     epgChannel = channel,
                     epgChannelSlotConfig = epgSlotsState.epgChannelSlotConfig,

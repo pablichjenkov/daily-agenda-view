@@ -14,11 +14,11 @@ class TimeSlotsStateController(
     val slotHeight = slotConfig.slotHeight
     val slotUnit = 1.0F / slotScale
     val firstSlotIndex = (slotScale * slotConfig.initialSlotValue.toInt())
-    private val amountOfSlotsInOneDay = (slotConfig.lastSlotValue * slotScale).toInt()
+    private val lastSlotIndex = (slotConfig.lastSlotValue * slotScale).toInt()
 
     internal val decimalSlotsBaseLayoutStateController = DecimalSlotsBaseLayoutStateController(
         decimalSlotConfig = slotConfig,
-        slots = createSlots(firstSlotIndex, amountOfSlotsInOneDay),
+        slots = createSlots(firstSlotIndex, lastSlotIndex),
         eventsArrangement = eventsArrangement
     )
 
@@ -28,10 +28,10 @@ class TimeSlotsStateController(
 
     fun createSlots(
         firstSlotIndex: Int,
-        amountOfSlotsInOneDay: Int
+        lastSlotIndex: Int
     ): List<Slot> {
         val slots = mutableListOf<Slot>()
-        for (i in firstSlotIndex..amountOfSlotsInOneDay) {
+        for (i in firstSlotIndex..lastSlotIndex) {
             val slotStartValue = i * slotUnit
             val title = fromDecimalValueToTimeText(slotStartValue, timeSlotConfig.useAmPm)
 

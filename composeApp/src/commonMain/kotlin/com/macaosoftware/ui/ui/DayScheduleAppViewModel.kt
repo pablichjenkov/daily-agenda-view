@@ -24,7 +24,7 @@ import kotlin.uuid.Uuid
 
 class DayScheduleAppViewModel {
 
-    var slotsViewType by mutableStateOf<SlotsViewType>(value = SlotsViewType.Timeline)
+    var slotsViewType by mutableStateOf(value = SlotsViewType.Timeline)
 
     val allDayEvents = mutableListOf<AllDayEvent>()
 
@@ -90,27 +90,27 @@ class DayScheduleAppViewModel {
         }
     }
 
-    var calendarEventOperationsState =
-        mutableStateOf<CalendarEventOperationsState>(CalendarEventOperationsState.Hidden)
+    var bottomSheetEventsState =
+        mutableStateOf<BottomSheetEventsState>(BottomSheetEventsState.Hidden)
 
     @OptIn(ExperimentalUuidApi::class)
-    val uiActionListener = object : UiActionListener {
+    internal val uiActionListener = object : UiActionListener {
 
         override fun showAddEventForm(slotsViewType: SlotsViewType) {
             when (slotsViewType) {
                 SlotsViewType.Decimal -> {
-                    calendarEventOperationsState.value =
-                        CalendarEventOperationsState.AddDecimalEventRequested
+                    bottomSheetEventsState.value =
+                        BottomSheetEventsState.AddDecimalEventRequested
                 }
 
                 SlotsViewType.Timeline -> {
-                    calendarEventOperationsState.value =
-                        CalendarEventOperationsState.AddTimedEventRequested
+                    bottomSheetEventsState.value =
+                        BottomSheetEventsState.AddTimedEventRequested
                 }
 
                 SlotsViewType.Epg -> {
-                    calendarEventOperationsState.value =
-                        CalendarEventOperationsState.AddEpgEventRequested
+                    bottomSheetEventsState.value =
+                        BottomSheetEventsState.AddEpgEventRequested
                 }
             }
         }
@@ -132,8 +132,8 @@ class DayScheduleAppViewModel {
         }
 
         override fun showRemoveTimeEventForm(timeEvent: LocalTimeEvent) {
-            calendarEventOperationsState.value =
-                CalendarEventOperationsState.RemoveTimedEventRequested(localTimeEvent = timeEvent)
+            bottomSheetEventsState.value =
+                BottomSheetEventsState.RemoveTimedEventRequested(localTimeEvent = timeEvent)
         }
 
         override fun confirmedRemoveTimeEvent(eventTitle: String) {
@@ -161,8 +161,8 @@ class DayScheduleAppViewModel {
         }
 
         override fun showRemoveDecimalEventForm(decimalEvent: DecimalEvent) {
-            calendarEventOperationsState.value =
-                CalendarEventOperationsState.RemoveDecimalEventRequested(decimalEvent)
+            bottomSheetEventsState.value =
+                BottomSheetEventsState.RemoveDecimalEventRequested(decimalEvent)
         }
 
         override fun confirmedRemoveDecimalEvent(eventTitle: String) {
@@ -178,12 +178,12 @@ class DayScheduleAppViewModel {
         }
 
         override fun dismissInputForm() {
-            calendarEventOperationsState.value = CalendarEventOperationsState.Hidden
+            bottomSheetEventsState.value = BottomSheetEventsState.Hidden
         }
 
         override fun onTimeEventClicked(timeEvent: LocalTimeEvent) {
-            calendarEventOperationsState.value =
-                CalendarEventOperationsState.ShowTimedEventRequested(localTimeEvent = timeEvent)
+            bottomSheetEventsState.value =
+                BottomSheetEventsState.ShowTimedEventRequested(localTimeEvent = timeEvent)
         }
 
         override fun onTimeEventDoubleClicked(timeEvent: LocalTimeEvent) {
@@ -195,8 +195,8 @@ class DayScheduleAppViewModel {
         }
 
         override fun onDecimalEventClicked(decimalEvent: DecimalEvent) {
-            calendarEventOperationsState.value =
-                CalendarEventOperationsState.ShowDecimalEventRequested(decimalEvent)
+            bottomSheetEventsState.value =
+                BottomSheetEventsState.ShowDecimalEventRequested(decimalEvent)
         }
 
         override fun onDecimalEventDoubleClicked(decimalEvent: DecimalEvent) {
@@ -208,22 +208,22 @@ class DayScheduleAppViewModel {
         }
 
         override fun onEpgEventClicked(localTimeEvent: LocalTimeEvent) {
-            calendarEventOperationsState.value =
-                CalendarEventOperationsState.ShowEpgEventRequested(epgEvent = localTimeEvent)
+            bottomSheetEventsState.value =
+                BottomSheetEventsState.ShowEpgEventRequested(epgEvent = localTimeEvent)
         }
 
         override fun onEpgEventDoubleClicked(localTimeEvent: LocalTimeEvent) {
-            calendarEventOperationsState.value =
-                CalendarEventOperationsState.RemoveEpgEventRequested(epgEvent = localTimeEvent)
+            bottomSheetEventsState.value =
+                BottomSheetEventsState.RemoveEpgEventRequested(epgEvent = localTimeEvent)
         }
 
         override fun onEpgEventLongClicked(localTimeEvent: LocalTimeEvent) {
-            calendarEventOperationsState.value =
-                CalendarEventOperationsState.RemoveEpgEventRequested(epgEvent = localTimeEvent)
+            bottomSheetEventsState.value =
+                BottomSheetEventsState.RemoveEpgEventRequested(epgEvent = localTimeEvent)
         }
     }
 
-    interface UiActionListener {
+    internal interface UiActionListener {
         fun showAddEventForm(slotsViewType: SlotsViewType)
         fun confirmedAddTimeEvent(title: String, startLocalTime: LocalTime, endLocalTime: LocalTime)
         fun showRemoveTimeEventForm(timeEvent: LocalTimeEvent)
@@ -242,5 +242,23 @@ class DayScheduleAppViewModel {
         fun onEpgEventClicked(localTimeEvent: LocalTimeEvent)
         fun onEpgEventDoubleClicked(localTimeEvent: LocalTimeEvent)
         fun onEpgEventLongClicked(localTimeEvent: com.macaosoftware.ui.dailyagenda.timeslots.LocalTimeEvent)
+    }
+
+    var alertDialogEventsState =
+        mutableStateOf<AlertDialogEventsState>(value = AlertDialogEventsState.Hidden)
+
+    internal interface AlertDialogUiActionListener {
+        fun hideAlert()
+        fun showAlert(text: String)
+    }
+
+    internal val alertDialogUiActionListener = object : AlertDialogUiActionListener {
+        override fun hideAlert() {
+            alertDialogEventsState.value = AlertDialogEventsState.Hidden
+        }
+
+        override fun showAlert(text: String) {
+            alertDialogEventsState.value = AlertDialogEventsState.ShowingInfo(text = text)
+        }
     }
 }

@@ -15,9 +15,12 @@ class EpgSlotsStateController(
     val slotHeight = slotConfig.slotHeight
     val slotUnit = 1.0F / slotScale
     val firstSlotIndex = (slotScale * slotConfig.initialSlotValue.toInt())
-    private val amountOfSlotsInOneDay = (slotConfig.lastSlotValue * slotScale).toInt()
+    private val lastSlotIndex = (slotConfig.lastSlotValue * slotScale).toInt()
+    internal val epgChannelHeight =
+        ((slotConfig.lastSlotValue - slotConfig.initialSlotValue) * slotScale * slotHeight) +
+                epgChannelSlotConfig.topHeaderHeight
 
-    private val slots = createSlots(firstSlotIndex, amountOfSlotsInOneDay)
+    private val slots = createSlots(firstSlotIndex, lastSlotIndex)
 
     internal val epgChannels: MutableList<EpgChannel> = mutableListOf()
 
@@ -29,13 +32,12 @@ class EpgSlotsStateController(
 
     fun createSlots(
         firstSlotIndex: Int,
-        amountOfSlotsInOneDay: Int
+        lastSlotIndex: Int
     ): List<Slot> {
         val slots = mutableListOf<Slot>()
-        for (i in firstSlotIndex..amountOfSlotsInOneDay) {
+        for (i in firstSlotIndex..lastSlotIndex) {
             val slotStartValue = i * slotUnit
             val title = fromDecimalValueToTimeText(slotStartValue, timeSlotConfig.useAmPm)
-
             slots.add(
                 Slot(
                     title = title,
@@ -51,7 +53,8 @@ class EpgSlotsStateController(
         return EpgSlotsState(
             slots = slots,
             epgChannels = epgChannels,
-            epgChannelSlotConfig = epgChannelSlotConfig
+            epgChannelSlotConfig = epgChannelSlotConfig,
+            epgChannelHeight = epgChannelHeight
         )
     }
 
