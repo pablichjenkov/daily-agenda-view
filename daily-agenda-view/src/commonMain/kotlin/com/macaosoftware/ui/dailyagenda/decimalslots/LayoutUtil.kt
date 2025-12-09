@@ -1,5 +1,7 @@
 package com.macaosoftware.ui.dailyagenda.decimalslots
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
@@ -227,3 +229,6 @@ private fun shouldReturnMinimumAllowedWidth(
         }
     }
 }
+
+@Composable
+internal fun Int.toDp(): Dp = with(receiver = LocalDensity.current) { toDp() }

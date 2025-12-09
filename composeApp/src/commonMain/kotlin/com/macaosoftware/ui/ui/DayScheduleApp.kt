@@ -31,6 +31,9 @@ import com.macaosoftware.ui.dailyagenda.timeslots.TimeSlotsStateController
 import com.macaosoftware.ui.dailyagenda.timeslots.TimeSlotsView
 import com.macaosoftware.ui.data.DecimalSlotsDataSample
 import com.macaosoftware.ui.data.EpgSlotsDataSample
+import com.macaosoftware.ui.ui.DayScheduleAppViewModel.DecimalSlotsUiActionListener
+import com.macaosoftware.ui.ui.DayScheduleAppViewModel.EpgSlotsUiActionListener
+import com.macaosoftware.ui.ui.DayScheduleAppViewModel.TimeSlotsUiActionListener
 import com.macaosoftware.ui.ui.model.AllDayEvent
 import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -53,7 +56,7 @@ fun DayScheduleApp() {
                     SlotsViewType.Decimal -> {
                         DecimalSlotExample(
                             decimalSlotsStateController = viewModel.decimalSlotsStateController,
-                            uiActionListener = viewModel.uiActionListener
+                            decimalSlotsUiActionListener = viewModel.decimalSlotsUiActionListener
                         )
                     }
 
@@ -61,14 +64,14 @@ fun DayScheduleApp() {
                         TimeSlotExample(
                             allDayEvents = viewModel.allDayEvents,
                             timeSlotsStateController = viewModel.timeSlotsStateController,
-                            uiActionListener = viewModel.uiActionListener
+                            timeSlotsUiActionListener = viewModel.timeSlotsUiActionListener
                         )
                     }
 
                     SlotsViewType.Epg -> {
                         EpgSlotExample(
                             epgSlotsStateController = viewModel.epgSlotsStateController,
-                            uiActionListener = viewModel.uiActionListener
+                            epgSlotsUiActionListener = viewModel.epgSlotsUiActionListener
                         )
                     }
                 }
@@ -78,6 +81,9 @@ fun DayScheduleApp() {
                 )
                 DayScheduleAppBottomSheet(
                     bottomSheetEventsState = viewModel.bottomSheetEventsState.value,
+                    timeSlotsUiActionListener = viewModel.timeSlotsUiActionListener,
+                    decimalSlotsUiActionListener = viewModel.decimalSlotsUiActionListener,
+                    epgSlotsUiActionListener = viewModel.epgSlotsUiActionListener,
                     uiActionListener = viewModel.uiActionListener,
                     alertDialogUiActionListener = viewModel.alertDialogUiActionListener
                 )
@@ -95,7 +101,7 @@ fun DayScheduleApp() {
 private fun TimeSlotExample(
     allDayEvents: List<AllDayEvent>,
     timeSlotsStateController: TimeSlotsStateController,
-    uiActionListener: DayScheduleAppViewModel.UiActionListener
+    timeSlotsUiActionListener: TimeSlotsUiActionListener
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Box(
@@ -115,13 +121,13 @@ private fun TimeSlotExample(
                     .background(color = generateRandomColor(localTimeEvent.uuid))
                     .combinedClickable(
                         onClick = {
-                            uiActionListener.onTimeEventClicked(localTimeEvent)
+                            timeSlotsUiActionListener.onTimeEventClicked(localTimeEvent)
                         },
                         onDoubleClick = {
-                            uiActionListener.onTimeEventDoubleClicked(localTimeEvent)
+                            timeSlotsUiActionListener.onTimeEventDoubleClicked(localTimeEvent)
                         },
                         onLongClick = {
-                            uiActionListener.onTimeEventLongClicked(localTimeEvent)
+                            timeSlotsUiActionListener.onTimeEventLongClicked(localTimeEvent)
                         }
                     )
             ) {
@@ -138,7 +144,7 @@ private fun TimeSlotExample(
 @Composable
 private fun DecimalSlotExample(
     decimalSlotsStateController: DecimalSlotsStateController,
-    uiActionListener: DayScheduleAppViewModel.UiActionListener
+    decimalSlotsUiActionListener: DecimalSlotsUiActionListener
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         DecimalSlotsView(
@@ -150,13 +156,13 @@ private fun DecimalSlotExample(
                     .background(color = generateRandomColor(decimalEvent.uuid))
                     .combinedClickable(
                         onClick = {
-                            uiActionListener.onDecimalEventClicked(decimalEvent)
+                            decimalSlotsUiActionListener.onDecimalEventClicked(decimalEvent)
                         },
                         onDoubleClick = {
-                            uiActionListener.onDecimalEventDoubleClicked(decimalEvent)
+                            decimalSlotsUiActionListener.onDecimalEventDoubleClicked(decimalEvent)
                         },
                         onLongClick = {
-                            uiActionListener.onDecimalEventLongClicked(decimalEvent)
+                            decimalSlotsUiActionListener.onDecimalEventLongClicked(decimalEvent)
                         }
                     )
             ) {
@@ -174,7 +180,7 @@ private fun DecimalSlotExample(
 @Composable
 private fun EpgSlotExample(
     epgSlotsStateController: EpgSlotsStateController,
-    uiActionListener: DayScheduleAppViewModel.UiActionListener
+    epgSlotsUiActionListener: EpgSlotsUiActionListener
 ) {
     EpgSlotsView(
         epgSlotsStateController = epgSlotsStateController
@@ -184,13 +190,13 @@ private fun EpgSlotExample(
                 .background(generateRandomColor(localTimeEvent.uuid))
                 .combinedClickable(
                     onClick = {
-                        uiActionListener.onEpgEventClicked(localTimeEvent)
+                        epgSlotsUiActionListener.onEpgEventClicked(localTimeEvent)
                     },
                     onDoubleClick = {
-                        uiActionListener.onEpgEventDoubleClicked(localTimeEvent)
+                        epgSlotsUiActionListener.onEpgEventDoubleClicked(localTimeEvent)
                     },
                     onLongClick = {
-                        uiActionListener.onEpgEventLongClicked(localTimeEvent)
+                        epgSlotsUiActionListener.onEpgEventLongClicked(localTimeEvent)
                     }
                 )
         ) {

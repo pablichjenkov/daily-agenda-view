@@ -21,6 +21,9 @@ import kotlinx.datetime.LocalTime
 @Composable
 internal fun DayScheduleAppBottomSheet(
     bottomSheetEventsState: BottomSheetEventsState,
+    timeSlotsUiActionListener: DayScheduleAppViewModel.TimeSlotsUiActionListener,
+    decimalSlotsUiActionListener: DayScheduleAppViewModel.DecimalSlotsUiActionListener,
+    epgSlotsUiActionListener: DayScheduleAppViewModel.EpgSlotsUiActionListener,
     uiActionListener: DayScheduleAppViewModel.UiActionListener,
     alertDialogUiActionListener: DayScheduleAppViewModel.AlertDialogUiActionListener
 ) {
@@ -123,6 +126,7 @@ internal fun DayScheduleAppBottomSheet(
                 Column {
                     Text("Add a new Time Event!")
                     var textValueTitle by remember { mutableStateOf("") }
+                    var textValueDescription by remember { mutableStateOf("") }
                     var textStartHour by remember { mutableStateOf("") }
                     var textStartMinute by remember { mutableStateOf("") }
                     var textEndHour by remember { mutableStateOf("") }
@@ -131,6 +135,11 @@ internal fun DayScheduleAppBottomSheet(
                         value = textValueTitle, // Can share the same state or use a separate one
                         onValueChange = { newText -> textValueTitle = newText },
                         label = { Text("Title") }
+                    )
+                    TextField(
+                        value = textValueDescription, // Can share the same state or use a separate one
+                        onValueChange = { newText -> textValueDescription = newText },
+                        label = { Text("Description") }
                     )
                     Row {
                         Column {
@@ -162,8 +171,9 @@ internal fun DayScheduleAppBottomSheet(
                         Button(onClick = {
                             scope.launch { sheetState.hide() }.invokeOnCompletion {
                                 try {
-                                    uiActionListener.confirmedAddTimeEvent(
+                                    timeSlotsUiActionListener.confirmedAddTimeEvent(
                                         title = textValueTitle,
+                                        description = textValueDescription,
                                         startLocalTime = LocalTime(
                                             textStartHour.toInt(),
                                             textStartMinute.toInt()
@@ -213,7 +223,7 @@ internal fun DayScheduleAppBottomSheet(
                     Row {
                         Button(onClick = {
                             scope.launch { sheetState.hide() }.invokeOnCompletion {
-                                uiActionListener.confirmedRemoveTimeEvent(eventTitle)
+                                timeSlotsUiActionListener.confirmedRemoveTimeEvent(eventTitle)
                             }
                         }) {
                             Text("Remove")
@@ -325,7 +335,7 @@ internal fun DayScheduleAppBottomSheet(
                         Button(onClick = {
                             scope.launch { sheetState.hide() }.invokeOnCompletion {
                                 try {
-                                    uiActionListener.confirmedAddDecimalSegment(
+                                    decimalSlotsUiActionListener.confirmedAddDecimalSegment(
                                         title = textValueTitle,
                                         startValue = textStartValue.toFloat(),
                                         endValue = textEndValue.toFloat()
@@ -370,8 +380,7 @@ internal fun DayScheduleAppBottomSheet(
                     Row {
                         Button(onClick = {
                             scope.launch { sheetState.hide() }.invokeOnCompletion {
-                                println("Pablo Remove Event Clicked")
-                                uiActionListener.confirmedRemoveDecimalEvent(eventTitle)
+                                decimalSlotsUiActionListener.confirmedRemoveDecimalEvent(eventTitle)
                             }
                         }) {
                             Text("Remove")
@@ -478,6 +487,7 @@ internal fun DayScheduleAppBottomSheet(
                 Column {
                     Text("Add a new Show!")
                     var textValueTitle by remember { mutableStateOf("") }
+                    var textValueDescription by remember { mutableStateOf("") }
                     var textStartHour by remember { mutableStateOf("") }
                     var textStartMinute by remember { mutableStateOf("") }
                     var textEndHour by remember { mutableStateOf("") }
@@ -486,6 +496,11 @@ internal fun DayScheduleAppBottomSheet(
                         value = textValueTitle, // Can share the same state or use a separate one
                         onValueChange = { newText -> textValueTitle = newText },
                         label = { Text("Title") }
+                    )
+                    TextField(
+                        value = textValueDescription, // Can share the same state or use a separate one
+                        onValueChange = { newText -> textValueDescription = newText },
+                        label = { Text("Description") }
                     )
                     Row {
                         Column {
@@ -517,8 +532,9 @@ internal fun DayScheduleAppBottomSheet(
                         Button(onClick = {
                             scope.launch { sheetState.hide() }.invokeOnCompletion {
                                 try {
-                                    uiActionListener.confirmedAddTimeEvent(
+                                    epgSlotsUiActionListener.confirmedAddEpgEvent(
                                         title = textValueTitle,
+                                        description = textValueDescription,
                                         startLocalTime = LocalTime(
                                             hour = textStartHour.toInt(),
                                             minute = textStartMinute.toInt()
@@ -568,7 +584,7 @@ internal fun DayScheduleAppBottomSheet(
                     Row {
                         Button(onClick = {
                             scope.launch { sheetState.hide() }.invokeOnCompletion {
-                                uiActionListener.confirmedRemoveTimeEvent(eventTitle)
+                                epgSlotsUiActionListener.confirmedRemoveEpgEvent(eventTitle)
                             }
                         }) {
                             Text("Remove")

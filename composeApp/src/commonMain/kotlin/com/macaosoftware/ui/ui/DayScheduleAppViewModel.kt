@@ -8,6 +8,7 @@ import com.macaosoftware.ui.dailyagenda.decimalslots.DecimalSlotConfig
 import com.macaosoftware.ui.dailyagenda.decimalslots.DecimalSlotsStateController
 import com.macaosoftware.ui.dailyagenda.decimalslots.EventWidthType
 import com.macaosoftware.ui.dailyagenda.decimalslots.EventsArrangement
+import com.macaosoftware.ui.dailyagenda.epgslots.EpgChannel
 import com.macaosoftware.ui.dailyagenda.epgslots.EpgChannelSlotConfig
 import com.macaosoftware.ui.dailyagenda.epgslots.EpgSlotsStateController
 import com.macaosoftware.ui.dailyagenda.timeslots.LocalTimeEvent
@@ -25,6 +26,8 @@ import kotlin.uuid.Uuid
 class DayScheduleAppViewModel {
 
     var slotsViewType by mutableStateOf(value = SlotsViewType.Timeline)
+
+    // region: AllDayEvent
 
     val allDayEvents = mutableListOf<AllDayEvent>()
 
@@ -47,6 +50,10 @@ class DayScheduleAppViewModel {
         return allDayEvents.add(allDayEvent)
     }
 
+    // endregion
+
+    // region: timeSlotsStateController
+
     val timeSlotsStateController by lazy {
         TimeSlotsStateController(
             timeSlotConfig = TimeSlotConfig(
@@ -62,6 +69,71 @@ class DayScheduleAppViewModel {
         }
     }
 
+    internal interface TimeSlotsUiActionListener {
+        fun confirmedAddTimeEvent(
+            title: String,
+            description: String,
+            startLocalTime: LocalTime,
+            endLocalTime: LocalTime
+        )
+
+        fun showRemoveTimeEventForm(timeEvent: LocalTimeEvent)
+        fun confirmedRemoveTimeEvent(eventTitle: String)
+        fun onTimeEventClicked(timeEvent: LocalTimeEvent)
+        fun onTimeEventDoubleClicked(timeEvent: LocalTimeEvent)
+        fun onTimeEventLongClicked(timeEvent: LocalTimeEvent)
+    }
+
+    @OptIn(ExperimentalUuidApi::class)
+    internal val timeSlotsUiActionListener = object : TimeSlotsUiActionListener {
+
+        override fun confirmedAddTimeEvent(
+            title: String,
+            description: String,
+            startLocalTime: LocalTime,
+            endLocalTime: LocalTime
+        ) {
+            uiActionListener.dismissInputForm()
+            timeSlotsStateController.timeSlotsDataUpdater.postUpdate {
+                addEvent(
+                    title = title,
+                    description = description,
+                    startTime = startLocalTime,
+                    endTime = endLocalTime
+                )
+            }
+        }
+
+        override fun showRemoveTimeEventForm(timeEvent: LocalTimeEvent) {
+            bottomSheetEventsState.value =
+                BottomSheetEventsState.RemoveTimedEventRequested(localTimeEvent = timeEvent)
+        }
+
+        override fun confirmedRemoveTimeEvent(eventTitle: String) {
+            uiActionListener.dismissInputForm()
+            timeSlotsStateController.timeSlotsDataUpdater.postUpdate {
+                removeEventByTitle(eventTitle = eventTitle)
+            }
+        }
+
+        override fun onTimeEventClicked(timeEvent: LocalTimeEvent) {
+            bottomSheetEventsState.value =
+                BottomSheetEventsState.ShowTimedEventRequested(localTimeEvent = timeEvent)
+        }
+
+        override fun onTimeEventDoubleClicked(timeEvent: LocalTimeEvent) {
+            showRemoveTimeEventForm(timeEvent)
+        }
+
+        override fun onTimeEventLongClicked(timeEvent: LocalTimeEvent) {
+            showRemoveTimeEventForm(timeEvent)
+        }
+    }
+
+    // endregion
+
+    // region: DecimalSlotsStateController
+
     val decimalSlotsStateController by lazy {
         DecimalSlotsStateController(
             decimalSlotConfig = DecimalSlotConfig(
@@ -76,10 +148,70 @@ class DayScheduleAppViewModel {
         }
     }
 
+    internal interface DecimalSlotsUiActionListener {
+        fun confirmedAddDecimalSegment(title: String, startValue: Float, endValue: Float)
+        fun showRemoveDecimalEventForm(decimalEvent: DecimalEvent)
+        fun confirmedRemoveDecimalEvent(eventTitle: String)
+        fun onDecimalEventClicked(decimalEvent: DecimalEvent)
+        fun onDecimalEventDoubleClicked(decimalEvent: DecimalEvent)
+        fun onDecimalEventLongClicked(decimalEvent: DecimalEvent)
+    }
+
+    @OptIn(ExperimentalUuidApi::class)
+    internal val decimalSlotsUiActionListener = object : DecimalSlotsUiActionListener {
+
+        override fun confirmedAddDecimalSegment(
+            title: String,
+            startValue: Float,
+            endValue: Float
+        ) {
+            uiActionListener.dismissInputForm()
+            decimalSlotsStateController.decimalSlotsDataUpdater.postUpdate {
+                addDecimalEvent(
+                    title = title,
+                    description = Constants.EmptyDescription,
+                    startValue = startValue,
+                    endValue = endValue
+                )
+            }
+        }
+
+        override fun showRemoveDecimalEventForm(decimalEvent: DecimalEvent) {
+            bottomSheetEventsState.value =
+                BottomSheetEventsState.RemoveDecimalEventRequested(decimalEvent)
+        }
+
+        override fun confirmedRemoveDecimalEvent(eventTitle: String) {
+            uiActionListener.dismissInputForm()
+            decimalSlotsStateController.decimalSlotsDataUpdater.postUpdate {
+                removeDecimalEventByTittle(eventTitle = eventTitle)
+            }
+        }
+
+        override fun onDecimalEventClicked(decimalEvent: DecimalEvent) {
+            bottomSheetEventsState.value =
+                BottomSheetEventsState.ShowDecimalEventRequested(decimalEvent)
+        }
+
+        override fun onDecimalEventDoubleClicked(decimalEvent: DecimalEvent) {
+            showRemoveDecimalEventForm(decimalEvent)
+        }
+
+        override fun onDecimalEventLongClicked(decimalEvent: DecimalEvent) {
+            showRemoveDecimalEventForm(decimalEvent)
+        }
+    }
+
+    // endregion
+
+    // region EpgSlotsStateController
+
     @OptIn(ExperimentalUuidApi::class)
     val epgSlotsStateController by lazy {
         EpgSlotsStateController(
             EpgChannelSlotConfig(
+                topHeaderHeight = 48,
+                channelWidth = 96,
                 timeSlotConfig = TimeSlotConfig(
                     startSlotTime = LocalTime(6, 0),
                     endSlotTime = LocalTime(23, 59)
@@ -90,8 +222,80 @@ class DayScheduleAppViewModel {
         }
     }
 
+    internal interface EpgSlotsUiActionListener {
+        fun confirmedAddEpgEvent(
+            title: String,
+            description: String,
+            startLocalTime: LocalTime,
+            endLocalTime: LocalTime
+        )
+
+        fun confirmedRemoveEpgEvent(eventTitle: String)
+        fun onEpgEventClicked(localTimeEvent: LocalTimeEvent)
+        fun onEpgEventDoubleClicked(localTimeEvent: LocalTimeEvent)
+        fun onEpgEventLongClicked(localTimeEvent: LocalTimeEvent)
+    }
+
+    @OptIn(ExperimentalUuidApi::class)
+    internal val epgSlotsUiActionListener = object : EpgSlotsUiActionListener {
+
+        override fun confirmedAddEpgEvent(
+            title: String,
+            description: String,
+            startLocalTime: LocalTime,
+            endLocalTime: LocalTime
+        ) {
+            uiActionListener.dismissInputForm()
+            epgSlotsStateController.epgSlotsDataUpdater.postUpdate {
+                addChannel(
+                    EpgChannel(
+                        name = "New Channel",
+                        events = listOf(
+                            LocalTimeEvent(
+                                uuid = Uuid.random(),
+                                title = title,
+                                description = description,
+                                startTime = startLocalTime,
+                                endTime = endLocalTime
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+        override fun confirmedRemoveEpgEvent(eventTitle: String) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onEpgEventClicked(localTimeEvent: LocalTimeEvent) {
+            bottomSheetEventsState.value =
+                BottomSheetEventsState.ShowEpgEventRequested(epgEvent = localTimeEvent)
+        }
+
+        override fun onEpgEventDoubleClicked(localTimeEvent: LocalTimeEvent) {
+            bottomSheetEventsState.value =
+                BottomSheetEventsState.RemoveEpgEventRequested(epgEvent = localTimeEvent)
+        }
+
+        override fun onEpgEventLongClicked(localTimeEvent: LocalTimeEvent) {
+            bottomSheetEventsState.value =
+                BottomSheetEventsState.RemoveEpgEventRequested(epgEvent = localTimeEvent)
+        }
+    }
+
+    // endregion
+
+    // region: Global screen events
+
     var bottomSheetEventsState =
         mutableStateOf<BottomSheetEventsState>(BottomSheetEventsState.Hidden)
+
+    internal interface UiActionListener {
+        fun showAddEventForm(slotsViewType: SlotsViewType)
+        fun toggleAxisType(slotsViewType: SlotsViewType)
+        fun dismissInputForm()
+    }
 
     @OptIn(ExperimentalUuidApi::class)
     internal val uiActionListener = object : UiActionListener {
@@ -115,63 +319,6 @@ class DayScheduleAppViewModel {
             }
         }
 
-        override fun confirmedAddTimeEvent(
-            title: String,
-            startLocalTime: LocalTime,
-            endLocalTime: LocalTime
-        ) {
-            dismissInputForm()
-            timeSlotsStateController.timeSlotsDataUpdater.postUpdate {
-                addEvent(
-                    title = title,
-                    description = Constants.EmptyDescription,
-                    startTime = startLocalTime,
-                    endTime = endLocalTime
-                )
-            }
-        }
-
-        override fun showRemoveTimeEventForm(timeEvent: LocalTimeEvent) {
-            bottomSheetEventsState.value =
-                BottomSheetEventsState.RemoveTimedEventRequested(localTimeEvent = timeEvent)
-        }
-
-        override fun confirmedRemoveTimeEvent(eventTitle: String) {
-            dismissInputForm()
-            timeSlotsStateController.timeSlotsDataUpdater.postUpdate {
-                println("Pablo confirmRemoveTimeEvent executing")
-                removeEventByTitle(eventTitle = eventTitle)
-            }
-        }
-
-        override fun confirmedAddDecimalSegment(
-            title: String,
-            startValue: Float,
-            endValue: Float
-        ) {
-            dismissInputForm()
-            decimalSlotsStateController.decimalSlotsDataUpdater.postUpdate {
-                addDecimalEvent(
-                    title = title,
-                    description = Constants.EmptyDescription,
-                    startValue = startValue,
-                    endValue = endValue
-                )
-            }
-        }
-
-        override fun showRemoveDecimalEventForm(decimalEvent: DecimalEvent) {
-            bottomSheetEventsState.value =
-                BottomSheetEventsState.RemoveDecimalEventRequested(decimalEvent)
-        }
-
-        override fun confirmedRemoveDecimalEvent(eventTitle: String) {
-            dismissInputForm()
-            decimalSlotsStateController.decimalSlotsDataUpdater.postUpdate {
-                removeDecimalEventByTittle(eventTitle = eventTitle)
-            }
-        }
-
         override fun toggleAxisType(slotsViewType: SlotsViewType) {
             if (this@DayScheduleAppViewModel.slotsViewType == slotsViewType) return
             this@DayScheduleAppViewModel.slotsViewType = slotsViewType
@@ -180,68 +327,6 @@ class DayScheduleAppViewModel {
         override fun dismissInputForm() {
             bottomSheetEventsState.value = BottomSheetEventsState.Hidden
         }
-
-        override fun onTimeEventClicked(timeEvent: LocalTimeEvent) {
-            bottomSheetEventsState.value =
-                BottomSheetEventsState.ShowTimedEventRequested(localTimeEvent = timeEvent)
-        }
-
-        override fun onTimeEventDoubleClicked(timeEvent: LocalTimeEvent) {
-            showRemoveTimeEventForm(timeEvent)
-        }
-
-        override fun onTimeEventLongClicked(timeEvent: LocalTimeEvent) {
-            showRemoveTimeEventForm(timeEvent)
-        }
-
-        override fun onDecimalEventClicked(decimalEvent: DecimalEvent) {
-            bottomSheetEventsState.value =
-                BottomSheetEventsState.ShowDecimalEventRequested(decimalEvent)
-        }
-
-        override fun onDecimalEventDoubleClicked(decimalEvent: DecimalEvent) {
-            showRemoveDecimalEventForm(decimalEvent)
-        }
-
-        override fun onDecimalEventLongClicked(decimalEvent: DecimalEvent) {
-            showRemoveDecimalEventForm(decimalEvent)
-        }
-
-        override fun onEpgEventClicked(localTimeEvent: LocalTimeEvent) {
-            bottomSheetEventsState.value =
-                BottomSheetEventsState.ShowEpgEventRequested(epgEvent = localTimeEvent)
-        }
-
-        override fun onEpgEventDoubleClicked(localTimeEvent: LocalTimeEvent) {
-            bottomSheetEventsState.value =
-                BottomSheetEventsState.RemoveEpgEventRequested(epgEvent = localTimeEvent)
-        }
-
-        override fun onEpgEventLongClicked(localTimeEvent: LocalTimeEvent) {
-            bottomSheetEventsState.value =
-                BottomSheetEventsState.RemoveEpgEventRequested(epgEvent = localTimeEvent)
-        }
-    }
-
-    internal interface UiActionListener {
-        fun showAddEventForm(slotsViewType: SlotsViewType)
-        fun confirmedAddTimeEvent(title: String, startLocalTime: LocalTime, endLocalTime: LocalTime)
-        fun showRemoveTimeEventForm(timeEvent: LocalTimeEvent)
-        fun confirmedRemoveTimeEvent(eventTitle: String)
-        fun confirmedAddDecimalSegment(title: String, startValue: Float, endValue: Float)
-        fun showRemoveDecimalEventForm(decimalEvent: DecimalEvent)
-        fun confirmedRemoveDecimalEvent(eventTitle: String)
-        fun toggleAxisType(slotsViewType: SlotsViewType)
-        fun dismissInputForm()
-        fun onTimeEventClicked(timeEvent: LocalTimeEvent)
-        fun onTimeEventDoubleClicked(timeEvent: LocalTimeEvent)
-        fun onTimeEventLongClicked(timeEvent: LocalTimeEvent)
-        fun onDecimalEventClicked(decimalEvent: DecimalEvent)
-        fun onDecimalEventDoubleClicked(decimalEvent: DecimalEvent)
-        fun onDecimalEventLongClicked(decimalEvent: DecimalEvent)
-        fun onEpgEventClicked(localTimeEvent: LocalTimeEvent)
-        fun onEpgEventDoubleClicked(localTimeEvent: LocalTimeEvent)
-        fun onEpgEventLongClicked(localTimeEvent: com.macaosoftware.ui.dailyagenda.timeslots.LocalTimeEvent)
     }
 
     var alertDialogEventsState =
@@ -261,4 +346,7 @@ class DayScheduleAppViewModel {
             alertDialogEventsState.value = AlertDialogEventsState.ShowingInfo(text = text)
         }
     }
+
+    // endregion
+
 }
