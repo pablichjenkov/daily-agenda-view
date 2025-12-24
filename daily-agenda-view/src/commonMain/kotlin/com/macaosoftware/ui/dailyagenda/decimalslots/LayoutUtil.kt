@@ -8,8 +8,14 @@ import androidx.compose.ui.unit.max
 
 /**
  * Returns the Event Y axis offset in Dp from the slot start time.
+ * Minimum value(when both are aligned): 0 = (decimalEvent.startValue - eventSlot.startValue)
+ * Maximum value: 0.9999' = (decimalEvent.startValue - eventSlot.startValue)
  * */
-internal fun getEventTranslationInSlot(decimalEvent: DecimalEvent, eventSlot: Slot, config: Config): Dp {
+internal fun getEventTranslationInSlot(
+    decimalEvent: DecimalEvent,
+    eventSlot: Slot,
+    config: Config
+): Dp {
     val fractionOfSlots = (decimalEvent.startValue - eventSlot.startValue) * config.slotScale
     return (fractionOfSlots * config.slotHeight).dp
 }
@@ -34,9 +40,11 @@ private fun getMaximumNumberOfSiblingsInContainingSlots(
     eventSlot: Slot,
     decimalSlotsBaseLayoutState: DecimalSlotsBaseLayoutState
 ): Int {
-    val containingSlots = getSlotsIncludeStartSlot(decimalEvent, eventSlot, decimalSlotsBaseLayoutState.slots)
+    val containingSlots =
+        getSlotsIncludeStartSlot(decimalEvent, eventSlot, decimalSlotsBaseLayoutState.slots)
     val maxNumberOfEvents = containingSlots.fold(initial = 0) { maxNumberOfEvents, slot ->
-        val numberOfEvents = decimalSlotsBaseLayoutState.slotInfoMap[slot]?.getTotalColumnSpans() ?: 0
+        val numberOfEvents =
+            decimalSlotsBaseLayoutState.slotInfoMap[slot]?.getTotalColumnSpans() ?: 0
         if (numberOfEvents > maxNumberOfEvents) {
             numberOfEvents
         } else maxNumberOfEvents
@@ -73,7 +81,10 @@ internal fun getSlotsIgnoreStartSlot(
     eventSlot: Slot
 ): List<Slot> {
     val slotIndex = decimalSlotsBaseLayoutState.slots.indexOf(eventSlot)
-    val laterSlots = decimalSlotsBaseLayoutState.slots.subList(slotIndex + 1, decimalSlotsBaseLayoutState.slots.size)
+    val laterSlots = decimalSlotsBaseLayoutState.slots.subList(
+        slotIndex + 1,
+        decimalSlotsBaseLayoutState.slots.size
+    )
     val containingSlots = mutableListOf<Slot>()
     laterSlots.forEach { slot ->
         if (decimalEvent.endValue > slot.startValue + 0.0001) {
@@ -132,7 +143,12 @@ internal fun getEventWidthFromLeft(
     slotRemainingWidth: Dp,
     minimumWidth: Dp
 ): Dp {
-    if (shouldReturnMinimumAllowedWidth(decimalSlotsBaseLayoutState.config, decimalEvent, eventSlot)) {
+    if (shouldReturnMinimumAllowedWidth(
+            decimalSlotsBaseLayoutState.config,
+            decimalEvent,
+            eventSlot
+        )
+    ) {
         return minimumWidth
     }
 
@@ -168,7 +184,12 @@ internal fun getEventWidthFromRight(
     slotRemainingWidth: Dp,
     minimumWidth: Dp
 ): Dp {
-    if (shouldReturnMinimumAllowedWidth(decimalSlotsBaseLayoutState.config, decimalEvent, eventSlot)) {
+    if (shouldReturnMinimumAllowedWidth(
+            decimalSlotsBaseLayoutState.config,
+            decimalEvent,
+            eventSlot
+        )
+    ) {
         return minimumWidth
     }
 

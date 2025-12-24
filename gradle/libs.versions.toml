@@ -8,7 +8,7 @@ android-targetSdk = "36"
 composeMultiplatform = "1.9.3"
 composeHotReload = "1.0.0"
 
-androidx-activity = "1.12.0"
+androidx-activity = "1.12.1"
 androidx-core = "1.17.0"
 androidx-lifecycle = "2.9.6"
 
