@@ -7,7 +7,7 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
-class LayoutUtilTest {
+class LayoutUtilTest1 {
 
     @Test
     fun `Compute the offset of an event with respect to its slot baseline - 1`() {
@@ -82,5 +82,65 @@ class LayoutUtilTest {
         )
         val offset = getEventTranslationInSlot(decimalEvent, eventSlot, config)
         assertEquals(expected = 100.dp, actual = offset)
+    }
+
+    @Test
+    fun `Compute the height of an event - 1`() {
+        val decimalEvent = DecimalEvent(
+            uuid = Uuid.random(),
+            title = "Event Test",
+            description = "Event Description",
+            startValue = 8.0F,
+            endValue = 9.0F,
+        )
+        val config = Config(
+            initialSlotValue = 0.0F,
+            lastSlotValue = 23.59F,
+            slotScale = 1,
+            slotHeight = 100,
+            timelineLeftPadding = 72
+        )
+        val eventHeight = getEventHeight(decimalEvent, config)
+        assertEquals(expected = 100.dp, actual = eventHeight)
+    }
+
+    @Test
+    fun `Compute the height of an event - 2`() {
+        val decimalEvent = DecimalEvent(
+            uuid = Uuid.random(),
+            title = "Event Test",
+            description = "Event Description",
+            startValue = 8.5F,
+            endValue = 10.5F,
+        )
+        val config = Config(
+            initialSlotValue = 0.0F,
+            lastSlotValue = 23.59F,
+            slotScale = 2,
+            slotHeight = 100,
+            timelineLeftPadding = 72
+        )
+        val eventHeight = getEventHeight(decimalEvent, config)
+        assertEquals(expected = 400.dp, actual = eventHeight)
+    }
+
+    @Test
+    fun `Compute the height of an event - 3`() {
+        val decimalEvent = DecimalEvent(
+            uuid = Uuid.random(),
+            title = "Event Test",
+            description = "Event Description",
+            startValue = 10.0F,
+            endValue = 10.5F,
+        )
+        val config = Config(
+            initialSlotValue = 0.0F,
+            lastSlotValue = 23.59F,
+            slotScale = 1,
+            slotHeight = 100,
+            timelineLeftPadding = 72
+        )
+        val eventHeight = getEventHeight(decimalEvent, config)
+        assertEquals(expected = 50.dp, actual = eventHeight)
     }
 }
