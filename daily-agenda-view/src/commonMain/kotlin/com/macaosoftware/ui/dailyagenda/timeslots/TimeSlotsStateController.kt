@@ -46,13 +46,15 @@ class TimeSlotsStateController(
         return slots
     }
 
+    /**
+     * Returns the TimeSlotsStateController data in the current state.
+     * This data can be later on serialized and be sent remote to be presented
+     * in another device or another platform.
+     * */
     fun getTimeSlotsData(): Map<LocalTimeSlot, List<LocalTimeEvent>> {
         val result = mutableMapOf<LocalTimeSlot, List<LocalTimeEvent>>()
         decimalSlotsBaseLayoutStateController.slotToDecimalEventMapSorted.forEach { entry ->
-            result.put(
-                key = entry.key.toLocalTimeSlot(),
-                value = entry.value.map { it.toLocalTimeEvent() }
-            )
+            result[entry.key.toLocalTimeSlot()] = entry.value.map { it.toLocalTimeEvent() }
         }
         return result
     }

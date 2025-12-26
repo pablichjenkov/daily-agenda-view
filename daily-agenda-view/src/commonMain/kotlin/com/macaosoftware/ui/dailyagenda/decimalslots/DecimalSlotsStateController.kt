@@ -39,6 +39,11 @@ open class DecimalSlotsStateController(
         return slots
     }
 
+    /**
+     * Returns the DecimalSlotsStateController data in the current state.
+     * This data can be later on serialized and be sent remote to be presented
+     * in another device or another platform.
+     * */
     fun getTimeSlotsData(): Map<Slot, List<DecimalEvent>> {
         return decimalSlotsBaseLayoutStateController.slotToDecimalEventMapSorted
     }

@@ -91,16 +91,22 @@ class DecimalSlotsBaseLayoutStateController(
 
                     // Update events counter
                     val currentSlotInfo =
-                        slotInfoMap.getOrPut(containingSlot) { SlotInfo(0, 0, 0) }
+                        slotInfoMap.getOrPut(containingSlot) {
+                            SlotInfo(numberOfContainingEvents = 0, numberOfColumnsLeft = 0, numberOfColumnsRight = 0)
+                        }
                     currentSlotInfo.numberOfContainingEvents++
                 }
             }
 
-            val iterSlotInfo = slotInfoMap.getOrPut(slotIter) { SlotInfo(0, 0, 0) }
+            val iterSlotInfo = slotInfoMap.getOrPut(slotIter) {
+                SlotInfo(numberOfContainingEvents = 0, numberOfColumnsLeft = 0, numberOfColumnsRight = 0)
+            }
             if (isLeftIter) {
                 slotLeftColumnMap.entries.forEach { entry ->
                     if (entry.key.title != slotIter.title) {
-                        val entrySlotInfo = slotInfoMap.getOrPut(entry.key) { SlotInfo(0, 0, 0) }
+                        val entrySlotInfo = slotInfoMap.getOrPut(entry.key) {
+                            SlotInfo(numberOfContainingEvents = 0, numberOfColumnsLeft = 0, numberOfColumnsRight = 0)
+                        }
                         entrySlotInfo.numberOfColumnsLeft =
                             iterSlotInfo.numberOfColumnsLeft + entry.value
                     }
@@ -110,7 +116,9 @@ class DecimalSlotsBaseLayoutStateController(
             } else {
                 slotRightColumnMap.entries.forEach { entry ->
                     if (entry.key.title != slotIter.title) {
-                        val entrySlotInfo = slotInfoMap.getOrPut(entry.key) { SlotInfo(0, 0, 0) }
+                        val entrySlotInfo = slotInfoMap.getOrPut(entry.key) {
+                            SlotInfo(numberOfContainingEvents = 0, numberOfColumnsLeft = 0, numberOfColumnsRight = 0)
+                        }
                         entrySlotInfo.numberOfColumnsRight =
                             iterSlotInfo.numberOfColumnsRight + entry.value
                     }
@@ -126,7 +134,7 @@ class DecimalSlotsBaseLayoutStateController(
             }
         }
 
-        slotInfoMap.entries.fold(1) { acc, entry ->
+        slotInfoMap.entries.fold(initial = 1) { acc, entry ->
             val slotColumns = entry.value.getTotalColumnSpans()
             if (slotColumns > maxColumns) maxColumns = slotColumns
             maxColumns
