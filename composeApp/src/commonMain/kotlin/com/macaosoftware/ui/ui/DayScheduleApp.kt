@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -113,7 +114,16 @@ private fun TimeSlotExample(
             )
         }
         TimeSlotsView(
-            timeSlotsStateController = timeSlotsStateController
+            timeSlotsStateController = timeSlotsStateController,
+            timeMarkerContentProvider = { currentTimeMarkerState ->
+                Box(
+                    modifier = Modifier
+                        .offset(y = currentTimeMarkerState.offsetY)
+                        .height(height = 1.dp)
+                        .fillMaxWidth()
+                        .background(Color.Blue)
+                )
+            }
         ) { localTimeEvent ->
             Box(
                 modifier = Modifier.fillMaxSize()

@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.macaosoftware.ui.dailyagenda.decimalslots.DecimalSlotsBaseLayout
+import com.macaosoftware.ui.dailyagenda.marker.CurrentTimeMarkerState
 import com.macaosoftware.ui.dailyagenda.marker.CurrentTimeMarkerStateController
 import com.macaosoftware.ui.dailyagenda.marker.CurrentTimeMarkerView
 import com.macaosoftware.ui.dailyagenda.slotslayer.SlotsLayer
@@ -16,6 +17,7 @@ import com.macaosoftware.ui.dailyagenda.slotslayer.getSlotsLayerState
 @Composable
 fun TimeSlotsView(
     timeSlotsStateController: TimeSlotsStateController,
+    timeMarkerContentProvider: @Composable ((CurrentTimeMarkerState) -> Unit)? = null,
     eventContentProvider: @Composable (event: LocalTimeEvent) -> Unit
 ) {
     val dailyAgendaState =
@@ -36,7 +38,8 @@ fun TimeSlotsView(
             }
         )
         CurrentTimeMarkerView(
-            currentTimeMarkerStateController = currentTimeMarkerStateController
+            currentTimeMarkerStateController = currentTimeMarkerStateController,
+            timeMarkerContentProvider = timeMarkerContentProvider
         )
     }
 }

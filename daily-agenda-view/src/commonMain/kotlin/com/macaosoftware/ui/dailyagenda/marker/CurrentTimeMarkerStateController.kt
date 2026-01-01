@@ -14,6 +14,8 @@ import kotlin.time.ExperimentalTime
 data class CurrentTimeMarkerState(val offsetY: Dp)
 
 internal class CurrentTimeMarkerStateController(
+    private val clock: Clock = Clock.System,
+    private val timeZone: TimeZone = TimeZone.currentSystemDefault(),
     decimalSlotConfig: DecimalSlotConfig
 ) {
 
@@ -31,10 +33,7 @@ internal class CurrentTimeMarkerStateController(
 
     @OptIn(ExperimentalTime::class)
     fun getCurrentLocalTime(): LocalTime {
-        val now = Clock.System.now()
-        val timeZone = TimeZone.currentSystemDefault()
-        val localDateTime = now.toLocalDateTime(timeZone)
-        return localDateTime.time
+        return clock.now().toLocalDateTime(timeZone).time
     }
 
 }

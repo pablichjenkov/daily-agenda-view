@@ -13,15 +13,20 @@ import androidx.compose.ui.unit.dp
 @Composable
 internal fun CurrentTimeMarkerView(
     modifier: Modifier = Modifier,
-    currentTimeMarkerStateController: CurrentTimeMarkerStateController
+    currentTimeMarkerStateController: CurrentTimeMarkerStateController,
+    timeMarkerContentProvider: (@Composable (CurrentTimeMarkerState) -> Unit)? = null
 ) {
 
     val state = currentTimeMarkerStateController.state
 
-    Box(modifier = modifier
-        .offset(y = state.value.offsetY)
-        .height(height = 1.dp)
-        .fillMaxWidth()
-        .background(Color.Red)
-    )
+    if (timeMarkerContentProvider == null) {
+        Box(
+            modifier = modifier
+                .offset(y = state.value.offsetY)
+                .height(height = 1.dp)
+                .fillMaxWidth()
+                .background(Color.Red)
+        )
+    } else timeMarkerContentProvider.invoke(state.value)
+
 }
