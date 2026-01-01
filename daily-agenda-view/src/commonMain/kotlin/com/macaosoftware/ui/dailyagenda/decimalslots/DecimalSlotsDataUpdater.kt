@@ -31,7 +31,10 @@ open class DecimalSlotsDataUpdater internal constructor(
     @OptIn(ExperimentalUuidApi::class)
     fun addDecimalEvent(decimalEvent: DecimalEvent): Boolean {
         val eventSlot =
-            decimalSlotsBaseLayoutStateController.getSlotForValue(startValue = decimalEvent.startValue)
+            decimalSlotsBaseLayoutStateController
+                .getSlotForValue(startValue = decimalEvent.startValue)
+                .getOrNull() ?: return false
+
         val siblingEvents =
             decimalSlotsBaseLayoutStateController.slotToDecimalEventMapSorted[eventSlot] ?: mutableListOf()
 
@@ -47,12 +50,14 @@ open class DecimalSlotsDataUpdater internal constructor(
 
     fun addDecimalEventList(startValue: Float, segments: List<DecimalEvent>) {
         isListOperation = true
-        val slot = decimalSlotsBaseLayoutStateController.getSlotForValue(startValue = startValue)
+        val slot = decimalSlotsBaseLayoutStateController
+            .getSlotForValue(startValue = startValue)
+            .getOrNull() ?: return
 
         if (slotToDecimalEventMapSortedTemp.contains(slot)) {
             slotToDecimalEventMapSortedTemp[slot]!!.addAll(elements = segments)
         } else {
-            slotToDecimalEventMapSortedTemp.put(slot, segments.toMutableList())
+            slotToDecimalEventMapSortedTemp[slot] = segments.toMutableList()
         }
     }
 
@@ -76,16 +81,18 @@ open class DecimalSlotsDataUpdater internal constructor(
         val entry = decimalEventMatchingResult.entry
         val decimalEvent = decimalEventMatchingResult.decimalEvent
 
-        return entry.value.remove(decimalEvent)
+        return entry.value.remove(element = decimalEvent)
     }
 
     fun removeDecimalEvent(decimalEvent: DecimalEvent): Boolean {
         val eventSlot =
-            decimalSlotsBaseLayoutStateController.getSlotForValue(startValue = decimalEvent.startValue)
+            decimalSlotsBaseLayoutStateController
+                .getSlotForValue(startValue = decimalEvent.startValue)
+                .getOrNull() ?: return false
         val siblingEvents =
             decimalSlotsBaseLayoutStateController.slotToDecimalEventMapSorted[eventSlot] ?: return false
 
-        return siblingEvents.remove(decimalEvent)
+        return siblingEvents.remove(element = decimalEvent)
     }
 
     internal fun commit() {
@@ -101,10 +108,10 @@ open class DecimalSlotsDataUpdater internal constructor(
                     decimalSlotsBaseLayoutStateController.slotToDecimalEventMapSorted[slot]!!
 
                 if (addedSegments != null) {
-                    addedSegments.addAll(existingSegments)
-                    slotToDecimalEventMapSortedMerge.put(slot, addedSegments)
+                    addedSegments.addAll(elements = existingSegments)
+                    slotToDecimalEventMapSortedMerge[slot] = addedSegments
                 } else {
-                    slotToDecimalEventMapSortedMerge.put(slot, existingSegments)
+                    slotToDecimalEventMapSortedMerge[slot] = existingSegments
                 }
             }
 
@@ -123,10 +130,7 @@ open class DecimalSlotsDataUpdater internal constructor(
             slotToDecimalEventMapSortedMerge.entries.forEach { entry ->
                 val eventsSortedByEndTime =
                     entry.value.sortedWith(endTimeComparator).toMutableList()
-                decimalSlotsBaseLayoutStateController.slotToDecimalEventMapSorted.put(
-                    entry.key,
-                    eventsSortedByEndTime
-                )
+                decimalSlotsBaseLayoutStateController.slotToDecimalEventMapSorted[entry.key] = eventsSortedByEndTime
             }
             isListOperation = false
         }

@@ -28,9 +28,25 @@ class DecimalSlotsBaseLayoutStateController(
         slots.forEach { slot -> slotToDecimalEventMapSorted[slot] = mutableListOf() }
     }
 
-    fun getSlotForValue(startValue: Float): Slot {
-        return slots.find { abs(x = startValue - it.startValue) < slotUnit }
-            ?: error("startTime: $startValue must be between ${config.initialSlotValue} and ${config.lastSlotValue}")
+    /**
+     * This function will return the slot where the startValue belongs to. If the startValue is out of the
+     * configuration range initialSlotValue <= .. <= lastSlotValue, then a failure is returned with an
+     * IllegalArgumentException.
+     * */
+    fun getSlotForValue(startValue: Float): Result<Slot> {
+
+        val slot = slots.find { abs(x = startValue - it.startValue) < slotUnit }
+
+        return if (slot != null) {
+            Result.success(value = slot)
+        } else {
+            val exception = IllegalArgumentException(
+                """
+                    startTime: $startValue must be between ${config.initialSlotValue} and ${config.lastSlotValue}
+                """
+            )
+            Result.failure(exception)
+        }
     }
 
     private fun computeNextState(): DecimalSlotsBaseLayoutState {
@@ -79,22 +95,29 @@ class DecimalSlotsBaseLayoutStateController(
 
             slotToDecimalEventMap[slotIter]?.forEachIndexed { idx, event ->
 
-                val eventSlot = getSlotForValue(startValue = event.startValue)
-
-                getSlotsIncludeStartSlot(event, eventSlot, slots).forEach { containingSlot ->
-                    // Update column mark
-                    if (isLeftIter) {
-                        slotLeftColumnMap.put(containingSlot, idx + 1)
-                    } else {
-                        slotRightColumnMap.put(containingSlot, idx + 1)
-                    }
-
-                    // Update events counter
-                    val currentSlotInfo =
-                        slotInfoMap.getOrPut(containingSlot) {
-                            SlotInfo(numberOfContainingEvents = 0, numberOfColumnsLeft = 0, numberOfColumnsRight = 0)
+                val eventSlot = getSlotForValue(startValue = event.startValue).getOrNull()
+                if (eventSlot != null) {
+                    getSlotsIncludeStartSlot(
+                        decimalEvent = event, eventSlot, slots
+                    ).forEach { containingSlot ->
+                        // Update column mark
+                        if (isLeftIter) {
+                            slotLeftColumnMap[containingSlot] = idx + 1
+                        } else {
+                            slotRightColumnMap[containingSlot] = idx + 1
                         }
-                    currentSlotInfo.numberOfContainingEvents++
+
+                        // Update events counter
+                        val currentSlotInfo =
+                            slotInfoMap.getOrPut(containingSlot) {
+                                SlotInfo(
+                                    numberOfContainingEvents = 0,
+                                    numberOfColumnsLeft = 0,
+                                    numberOfColumnsRight = 0
+                                )
+                            }
+                        currentSlotInfo.numberOfContainingEvents++
+                    }
                 }
             }
 
@@ -139,7 +162,7 @@ class DecimalSlotsBaseLayoutStateController(
             if (slotColumns > maxColumns) maxColumns = slotColumns
             maxColumns
         }
-        println("DailyAgendaState: maxColumns: $maxColumns")
+
         return ComputeSlotInfoResult(slotInfoMap, maxColumns)
     }
 

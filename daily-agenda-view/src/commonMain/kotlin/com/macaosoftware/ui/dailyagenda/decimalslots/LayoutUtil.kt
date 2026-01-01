@@ -49,7 +49,6 @@ private fun getMaximumNumberOfSiblingsInContainingSlots(
             numberOfEvents
         } else maxNumberOfEvents
     }
-    println("LayoutUtil: maxNumberOfEvents: $maxNumberOfEvents")
     return maxNumberOfEvents
 }
 
@@ -120,10 +119,8 @@ internal fun updateEventOffsetX(
         val offsetInfo = slotOffsetInfoMap[slot]!!
         if (isLeft) {
             offsetInfo.leftStartOffset = currentSlotOffsetInfo.getTotalLeftOffset()
-            println("LayoutUtil: slot: ${slot.title} has a new Left offset of: ${offsetInfo.leftAccumulated}")
         } else {
             offsetInfo.rightStartOffset = currentSlotOffsetInfo.getTotalRightOffset()
-            println("LayoutUtil: slot: ${slot.title} has a new Right offset of: ${offsetInfo.rightAccumulated}")
         }
     }
 }
