@@ -26,9 +26,9 @@ Live demo using kotlin-wasm: [Daily Agenda View](https://pablichjenkov.github.io
 
 | Agenda Version | Kotlin Version | CMP Version |
 |---------------|--------|-------|
+| 1.7.0 | 2.3.0 | 1.10.0 |
 | 1.6.0 | 2.3.0 | 1.9.3 |
 | 1.5.1 | 2.2.21 | 1.9.3 |
-| 1.4.0 | 2.2.21 | 1.9.3 |
 
   </td>
 </tr>
