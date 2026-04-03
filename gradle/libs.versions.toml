@@ -1,16 +1,16 @@
 [versions]
-dailyAgendaView = "1.7.0"
-kotlin = "2.3.0"
+dailyAgendaView = "1.7.1"
+kotlin = "2.3.20"
 agp = "8.13.2"
 android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
-composeMultiplatform = "1.10.0"
+composeMultiplatform = "1.10.3"
 composeHotReload = "1.0.0"
 
-androidx-activity = "1.12.2"
-androidx-core = "1.17.0"
-androidx-lifecycle = "2.9.6"
+androidx-activity = "1.13.0"
+androidx-core = "1.18.0"
+androidx-lifecycle = "2.10.0"
 
 kotlinx-coroutines = "1.10.2"
 kotlinx-datetime = "0.7.1"
