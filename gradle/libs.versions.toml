@@ -1,19 +1,19 @@
 [versions]
-dailyAgendaView = "1.7.1"
-kotlin = "2.3.20"
-agp = "8.13.2"
+dailyAgendaView = "1.7.2"
+kotlin = "2.3.21"
+agp = "9.1.0"
 android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
-composeMultiplatform = "1.10.3"
-composeHotReload = "1.0.0"
+composeMultiplatform = "1.11.0"
+composeHotReload = "1.1.1"
 
 androidx-activity = "1.13.0"
 androidx-core = "1.18.0"
 androidx-lifecycle = "2.10.0"
 
-kotlinx-coroutines = "1.10.2"
-kotlinx-datetime = "0.7.1"
+kotlinx-coroutines = "1.11.0"
+kotlinx-datetime = "0.8.0"
 
 vanniktechMavenPublish = "0.36.0"
 
@@ -35,6 +35,7 @@ kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-s
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
 [plugins]
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidKmpLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }

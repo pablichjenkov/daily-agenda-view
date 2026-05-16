@@ -1,4 +1,4 @@
-package com.macaosoftware.ui
+package com.macaosoftware.ui.dailyagenda
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

@@ -1,4 +1,4 @@
-package com.macaosoftware.ui
+package com.macaosoftware.ui.dailyagenda
 
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application

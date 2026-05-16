@@ -31,5 +31,8 @@ plugins {
 
 rootProject.name = "daily-agenda-view"
 // enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS") // not working on github actions
+include(":androidApp")
+include(":desktopApp")
+include(":webApp")
 include(":composeApp")
 include(":daily-agenda-view")
